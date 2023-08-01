@@ -1,5 +1,5 @@
 
-type Message @createModel(accountRelation: LIST, description: "A basic Profile") {
+type Message @createModel(accountRelation: LIST, description: "A basic message encrypted with LIT") {
     author: DID! @documentAccount
     encryptedMessage: String! @string(maxLength: 100000)
     symKey: String! @string(maxLength: 100000)
