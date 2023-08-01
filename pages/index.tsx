@@ -177,9 +177,9 @@ const Home: NextPage = () => {
           <>
             {" "}
             <div className={styles.formGroup2}>
-              <label>Result</label>
+              <label>Result </label>
               <textarea
-                style={{"height": "20rem", "width": "30rem"}}
+                style={{"height": "20rem", "width": "50rem",  "padding": "1rem"}}
                 value={res}
                 onChange={(e) => {
                   setRes(e.target.value);
@@ -188,9 +188,9 @@ const Home: NextPage = () => {
             </div>
             <div className={styles.form}>
               <div className={styles.formGroup}>
-                <label>Message</label>
-                <input
-                  type="text"
+                <label>Input Message to Encrypt</label>
+                <textarea
+                  style={{"height": "10rem", "width": "50rem", "padding": "1rem"}}
                   value={val}
                   onChange={(e) => {
                     setVal(e.target.value);
