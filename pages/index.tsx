@@ -178,9 +178,8 @@ const Home: NextPage = () => {
             {" "}
             <div className={styles.formGroup2}>
               <label>Result</label>
-              <input
+              <textarea
                 style={{"height": "20rem", "width": "30rem"}}
-                type="text"
                 value={res}
                 onChange={(e) => {
                   setRes(e.target.value);
