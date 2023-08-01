@@ -1,6 +1,16 @@
+# ComposeDB with LIT Protocol
+
+This is a rough example using LIT Protocol to encrypt and decrypt data based on on-chain condition logic while storing on ComposeDB.
+
 ## Getting Started
 
-First, run the development server:
+Install your dependencies:
+
+```bash
+npm install
+```
+
+Next, run the development server:
 
 ```bash
 npm run dev
