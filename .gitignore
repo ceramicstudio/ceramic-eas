@@ -1,0 +1,4 @@
+.next
+node_modules/*
+composedb.config.json
+admin-seed.txt
