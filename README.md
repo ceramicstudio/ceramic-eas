@@ -14,7 +14,7 @@ npm install
 
 2. Generate an admin seed and enter it into admin_seed.txt - you can reference our [set up your environment](https://composedb.js.org/docs/0.4.x/set-up-your-environment) page for both this step and the next
 
-3. Generate an admin did and enter it into composedb.config.json in the admin-dids array
+3. Generate an admin did from your seed and enter it into composedb.config.json in the admin-dids array
 
 4. In your terminal, run the following to start your Postgres instance:
 
