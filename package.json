@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "firstTime": "npx aws-sdk-js-codemod -t v2-to-v3 .",
+    "generate": "node scripts/commands.mjs",
     "dev": "node scripts/run.mjs",
     "nextDev": "next dev",
     "ceramic": "CERAMIC_ENABLE_EXPERIMENTAL_COMPOSE_DB='true' ceramic daemon --config ./composedb.config.json",
