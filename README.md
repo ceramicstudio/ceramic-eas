@@ -22,12 +22,12 @@ npm run generate
 
 #### Development
 ```bash
-npm begin
+npm run dev
 ```
 
 #### Build
 ```bash
-npm build
+npm run build
 ```
 
 ## Learn More
