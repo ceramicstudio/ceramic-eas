@@ -1,0 +1,186 @@
+
+
+.Title{
+  color: #163a54;
+  font-size: 22px;
+  font-family: Montserrat, sans-serif;
+}
+
+.NameHolder{
+  color: #000;
+  text-align: center;
+  font-size: 14px;
+  font-family: Montserrat, sans-serif;
+  font-weight: 700;
+  word-break: break-all;
+
+  @media (max-width: 700px) {
+    margin-bottom: 10px;
+  }
+}
+
+.Time{
+  color: #adadad;
+  text-align: center;
+  font-size: 14px;
+  font-family: Montserrat, serif;
+}
+
+
+
+.NewConnection{
+    color: #333342;
+    text-align: center;
+    font-size: 25px;
+    font-family: Montserrat, sans-serif;
+    font-style: italic;
+    font-weight: 700;
+    margin-top: 20px;
+}
+ 
+
+
+.VerifyIconContainer{
+    @media (max-width: 700px) {
+        margin-top: 16px;
+      }
+}
+ 
+
+
+.ConfirmButton{
+  display: inline-block;
+  border-radius: 10px;
+  border: 1px solid #cfb9ff;
+  background: #333342;
+  padding: 8px;
+  box-sizing: border-box;
+  color: #fff;
+  font-size: 12px;
+  font-family: Montserrat, sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+
+  :hover {
+    background: #cfb9ff;
+    color: #333342;
+  }
+
+  @media (max-width: 700px) {
+    margin-top: 10px;
+    width: 100%;
+    padding: 14px 8px;
+  }
+}
+
+.Container{
+  @media (max-width: 700px) {
+    width: 100%;
+  }
+}
+
+.IconHolder{
+    @media (max-width: 700px) {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 10px;
+      }
+}
+
+
+
+.GradientBar{
+    position: absolute;
+    width: 100%;
+    height: 200px;
+    left: 0;
+    top: 79px;
+    z-index: -1;
+    background: linear-gradient(
+      180deg,
+      rgba(194, 240, 255, 0.25) 0%,
+      rgba(184, 251, 247, 0.25) 19.15%,
+      rgba(237, 203, 192, 0.165) 38.91%,
+      rgba(135, 169, 239, 0.25) 51.27%,
+      rgba(201, 179, 244, 0.25) 66.09%
+    );
+    filter: blur(50px);
+}
+
+
+
+.MetButton{
+    border-radius: 10px;
+    border: 1px solid #cfb9ff;
+    background: #333342;
+    width: 100%;
+    padding: 20px 10px;
+    box-sizing: border-box;
+    color: #fff;
+    font-size: 18px;
+    font-family: Montserrat, sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+
+
+.SubText{
+    display: block;
+    cursor: pointer;
+    text-decoration: underline;
+    color: #ababab;
+    margin-top: 20px; 
+}
+  
+
+.InputContainer{
+    position: relative;
+  height: 90px; 
+}
+ 
+
+.EnsLogo{
+    position: absolute;
+    left: 14px;
+    top: 28px;
+    width: 30px; 
+}
+  
+.my-link {
+  margin: auto;
+}
+
+.InputBlock{
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 10px;
+    border: 1px solid rgba(19, 30, 38, 0.33);
+    background: rgba(255, 255, 255, 0.5);
+    color: #131e26;
+    font-size: 18px;
+    font-family: Chalkboard, sans-serif;
+    padding: 20px 10px;
+    text-align: center;
+    margin-top: 12px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+
+
+.WhiteBox {
+  box-shadow: 0 4px 33px rgba(168, 198, 207, 0.15);
+  background-color: #fff;
+  padding: 36px;
+  max-width: 590px;
+  border-radius: 10px;
+  margin: 40px auto 0;
+  text-align: center;
+  box-sizing: border-box;
+
+  @media (max-width: 700px) {
+    width: 100%;
+  }
+}

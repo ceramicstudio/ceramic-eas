@@ -1,9 +1,0 @@
-
-type Message @createModel(accountRelation: LIST, description: "A basic message encrypted with LIT") {
-    author: DID! @documentAccount
-    encryptedMessage: String! @string(maxLength: 100000)
-    symKey: String! @string(maxLength: 100000)
-    chain: String! @string(maxLength: 100000)
-    accessControlConditions: String! @string(maxLength: 100000)
-    accessControlConditionType: String @string(maxLength: 100000)
-}

@@ -1,4 +1,4 @@
-import '../styles/globals.css'
+"use client";
 
 import {CeramicWrapper} from "../context";
 import type { AppProps } from 'next/app'

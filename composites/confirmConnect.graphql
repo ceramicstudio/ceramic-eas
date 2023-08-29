@@ -1,0 +1,7 @@
+type Confirm @loadModel(id: "$CONFIRM_ID") {
+  id: ID!
+}
+
+type Attestation @loadModel(id: "$ATTESTATION_ID") {
+  confirm: [Confirm] @relationFrom(model: "Confirm", property: "attestationId")
+}

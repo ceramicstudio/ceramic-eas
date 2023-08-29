@@ -1,0 +1,25 @@
+type Attestation @loadModel(id: "$ATTESTATION_ID") {
+  id: ID!
+}
+
+type Confirm @createModel(
+    accountRelation: LIST
+    description: "A simple model to track attestation confirmations"
+  )
+  @createIndex(fields: [{ path: ["attester"] }])
+  @createIndex(fields: [{ path: ["recipient"] }])
+{
+  publisher: DID! @documentAccount 
+  version: CommitID! @documentVersion
+  uid: String! @string(minLength: 66, maxLength: 66)
+  schema: String! @string(minLength: 66, maxLength: 66)
+  attester: String! @string(minLength: 42, maxLength: 42)
+  recipient: String @string(minLength: 42, maxLength: 42)
+  expirationTime: DateTime
+  revocationTime: DateTime
+  refUID: String @string(minLength: 66, maxLength: 66)
+  time: String @string(maxLength: 12)
+  data: String! @string(maxLength: 1000000)
+  attestationId: StreamID! @documentReference(model: "Attestation")
+  attestation: Attestation! @relationDocument(property: "attestationId")
+}
