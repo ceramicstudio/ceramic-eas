@@ -22,8 +22,7 @@ type Props = {
 const eas = new EAS(EASContractAddress);
 
 export function AttestationItem({ data }: Props) {
-  const [account, setAccount] = useState("");
-  const address = data.attester;
+  const address = data.recipient;
   const [confirming, setConfirming] = useState(false);
 
   if (!address) return null;

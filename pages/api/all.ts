@@ -12,22 +12,22 @@ export default async function createAttestation(
   const { account } = req.body;
 
   //instantiate a ceramic client instance
-  const ceramic = new CeramicClient("https://ceramic-temp.hirenodes.io");
+  const ceramic = new CeramicClient('http://localhost:7007');
 
   //instantiate a composeDB client instance
   const composeClient = new ComposeClient({
-    ceramic: "https://ceramic-temp.hirenodes.io",
+    ceramic: 'http://localhost:7007',
     definition: definition as RuntimeCompositeDefinition,
   });
 
   try {
-    console.log(req.body);
+    console.log(req.body.account);
     const data: any = await composeClient.executeQuery(`
     query {
       attestationIndex(filters: { 
         where: { 
           recipient: { 
-            equalTo: "${account}" 
+            equalTo: "${req.body.account}" 
                     } 
                   }
                 } 

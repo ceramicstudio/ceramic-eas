@@ -31,7 +31,7 @@ export default function Home() {
         method: "eth_requestAccounts",
       });
       console.log("Connected", accounts[0]);
-      setAccount(accounts[0]);
+      setAccount(accounts[0].toLowerCase());
     } catch (error) {
       console.log(error);
     }
@@ -55,7 +55,7 @@ export default function Home() {
     if (accounts.length !== 0) {
       const acc = accounts[0];
       console.log("Found an authorized account:", acc);
-      setAccount(acc);
+      setAccount(acc.toLowerCase());
       await getAtts()
     } else {
       console.log("No authorized account found");
@@ -82,7 +82,7 @@ export default function Home() {
     console.log(tmpAttestations.data);
     setAttestations([]);
 
-    if (!address || !tmpAttestations.data) {
+    if (!account || !tmpAttestations.data) {
       setLoading(false);
       return;
     }

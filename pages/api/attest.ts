@@ -21,11 +21,11 @@ export default async function createAttestation(
   console.log(req.body, "42");
   console.log(env.AUTHOR_KEY)
   //instantiate a ceramic client instance
-  const ceramic = new CeramicClient("https://ceramic-temp.hirenodes.io");
+  const ceramic = new CeramicClient('http://localhost:7007');
 
   //instantiate a composeDB client instance
   const composeClient = new ComposeClient({
-    ceramic: "https://ceramic-temp.hirenodes.io",
+    ceramic: 'http://localhost:7007',
     definition: definition as RuntimeCompositeDefinition,
   });
 
@@ -33,6 +33,7 @@ export default async function createAttestation(
     const key = fromString(seed, "base16");
     const provider = new Ed25519Provider(key);
     const staticDid = new DID({
+      // @ts-expect-error: Ignore type error
       resolver: KeyResolver.getResolver(),
       provider
     });

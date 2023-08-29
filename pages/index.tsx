@@ -36,7 +36,7 @@ export default function Home() {
         method: "eth_requestAccounts",
       });
       console.log("Connected", accounts[0]);
-      setAccount(accounts[0]);
+      setAccount(accounts[0].toLowerCase());
       setStatus("connected");
     } catch (error) {
       console.log(error);
@@ -63,7 +63,7 @@ export default function Home() {
     if (accounts.length !== 0) {
       const acc = accounts[0];
       console.log("Found an authorized account:", acc);
-      setAccount(acc);
+      setAccount(acc.toLowerCase());
       setStatus("connected");
     } else {
       console.log("No authorized account found");
@@ -154,7 +154,7 @@ export default function Home() {
             autoCapitalize={"off"}
             placeholder={"Address/ENS"}
             value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            onChange={(e) => setAddress(e.target.value.toLowerCase())}
           />
           {ensResolvedAddress && (
             <img className="EnsLogo" src={"/ens-logo.png"} />
