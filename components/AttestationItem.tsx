@@ -1,10 +1,8 @@
-import { useState, useEffect } from "react";
-
+import { useState } from "react";
 import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 import dayjs from "dayjs";
 import { ethers } from "ethers";
 import { MdOutlineVerified, MdVerified } from "react-icons/md";
-import "../styles/styles.css";
 import { Identicon } from "./Identicon";
 import { theme } from "../utils/theme";
 import { ResolvedAttestation } from "../utils/types";
@@ -39,7 +37,7 @@ export function AttestationItem({ data }: Props) {
 
   return (
     <div
-      className="Container"
+      className="AttestContainer"
       onClick={() => {
         window.open(`${baseURL}/attestation/view/${data.id}`);
       }}

@@ -1,24 +1,15 @@
 import { useState, useEffect } from "react";
-import type { NextPage } from "next";
 import { networks } from "../utils/networks";
-import { FADE_DOWN_ANIMATION_VARIANTS } from "../config/design";
 import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 import { ethers } from "ethers";
 import Link from "next/link";
-import {
-  CUSTOM_SCHEMAS,
-  EASContractAddress,
-  baseURL,
-  getAddressForENS,
-} from "../utils/utils";
-import "../styles/styles.css";
+import { EASContractAddress } from "../utils/utils";
 
 const eas = new EAS(EASContractAddress);
 
 export default function Home() {
   const [account, setAccount] = useState("");
   const [status, setStatus] = useState("");
-  const [copied, setCopied] = useState(false);
   const [address, setAddress] = useState("");
   const [ensResolvedAddress, setEnsResolvedAddress] = useState("Dakh.eth");
   const [attesting, setAttesting] = useState(false);
@@ -130,12 +121,12 @@ export default function Home() {
         <div className="right">
           <img alt="Network logo" className="logo" src={"/ethlogo.png"} />
           {account.length ? (
-            <p style={{textAlign: "center"}}>
+            <p style={{ textAlign: "center" }}>
               {" "}
               Connected with: {account.slice(0, 6)}...{account.slice(-4)}{" "}
             </p>
           ) : (
-            <p style={{textAlign: "center"}}> Not connected </p>
+            <p style={{ textAlign: "center" }}> Not connected </p>
           )}
         </div>
       )}

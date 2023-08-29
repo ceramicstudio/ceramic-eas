@@ -1,20 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
-
-import { EAS } from "@ethereum-attestation-service/eas-sdk";
-import { motion } from "framer-motion";
-import Balancer from "react-wrap-balancer";
-import styled from "styled-components";
-import "../styles/styles.css";
-import { FADE_DOWN_ANIMATION_VARIANTS } from "../config/design";
 import { networks } from "../utils/networks";
 import { AttestationItem } from "../components/AttestationItem";
 import { ResolvedAttestation } from "../utils/types";
-import { EASContractAddress } from "../utils/utils";
 
 export default function Home() {
   const [account, setAccount] = useState("");
-  const [address, setAddress] = useState("");
   const [network, setNetwork] = useState("");
   const [attestations, setAttestations] = useState<ResolvedAttestation[]>([]);
   const [loading, setLoading] = useState(false);
@@ -57,6 +48,7 @@ export default function Home() {
       console.log("Found an authorized account:", acc);
       setAccount(acc.toLowerCase());
       await getAtts()
+      
     } else {
       console.log("No authorized account found");
     }
@@ -83,7 +75,7 @@ export default function Home() {
     setAttestations([]);
 
     if (!account || !tmpAttestations.data) {
-      setLoading(false);
+      // setLoading(false);
       return;
     }
     // const tmpAttestations = await getAttestationsForAddress(address);
@@ -178,12 +170,13 @@ export default function Home() {
             <div className="AttestationHolder">
               <div className="WhiteBox">
                 {loading && <div>Loading...</div>}
+                {!loading && !attestations.length &&  <div>No one here</div>}
                 {attestations.length > 0 || loading ? (
                   attestations.map((attestation, i) => (
                     <AttestationItem key={i} data={attestation} />
                   ))
                 ) : (
-                  <div>No one here yet</div>
+                  <div></div>
                 )}
                 {!account && <button className="MetButton" onClick={async () => connectWallet()}>Connect Wallet</button>}
               </div>

@@ -2,15 +2,10 @@
 import React, { useEffect, useState } from "react";
 
 import { EAS } from "@ethereum-attestation-service/eas-sdk";
-import { motion } from "framer-motion";
 import { networks } from "../utils/networks";
 import { QRCodeSVG } from "qrcode.react";
-import Link from "next/link";
-
-import { FADE_DOWN_ANIMATION_VARIANTS } from "../config/design";
-
 import { EASContractAddress, getENSName } from "../utils/utils";
-import "../styles/styles.css";
+
 
 const eas = new EAS(EASContractAddress);
 

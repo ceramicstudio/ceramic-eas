@@ -10,15 +10,6 @@ const nextConfig = {
   env: {
     mode: process.env.NODE_ENV,
   },
-  experimental: {
-    appDir: true,
-    fontLoaders: [
-      {
-        loader: '@next/font/google',
-        options: { subsets: ['latin'] },
-      },
-    ],
-  },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }) => {
     config.module.rules.push({
       test: /\.svg$/i,
