@@ -2,9 +2,9 @@ import axios from 'axios'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { Alchemy, Network } from 'alchemy-sdk';
 import { ethers } from 'ethers'
 import invariant from 'tiny-invariant'
-
 import { env } from '../env.mjs'
 
 import type { Attestation, AttestationResult, EASChainConfig, EnsNamesResult, MyAttestationResult } from './types'
@@ -57,11 +57,17 @@ export const EAS_CONFIG = {
 }
 
 export const timeFormatString = 'MM/DD/YYYY h:mm:ss a'
-export async function getAddressForENS(name: string) {
-  const provider = new ethers.providers.StaticJsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`, 'mainnet')
 
-  return await provider.resolveName(name)
+export async function getAddressForENS(name: string) {
+  const config = {
+    apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
+    network: Network.ETH_GOERLI,
+  };
+  const alchemy = new Alchemy(config);
+  const address = await alchemy.core.resolveName(name)
+  return address
 }
+
 export async function getENSName(address: string) {
   const provider = new ethers.providers.StaticJsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`, 'mainnet')
   return await provider.lookupAddress(address)

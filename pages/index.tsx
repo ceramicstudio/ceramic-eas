@@ -3,7 +3,7 @@ import { networks } from "../utils/networks";
 import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 import { ethers } from "ethers";
 import Link from "next/link";
-import { EASContractAddress } from "../utils/utils";
+import { EASContractAddress, getAddressForENS } from "../utils/utils";
 
 const eas = new EAS(EASContractAddress);
 
@@ -18,7 +18,6 @@ export default function Home() {
   const connectWallet = async () => {
     try {
       const { ethereum } = window;
-
       if (!ethereum) {
         alert("Get MetaMask -> https://metamask.io/");
         return;
@@ -78,7 +77,6 @@ export default function Home() {
       } catch (error: any) {
         // This error code means that the chain we want has not been added to MetaMask
         // In this case we ask the user to add it to their MetaMask
-
         if (error.code === 4902) {
           try {
             await window.ethereum.request({
@@ -163,7 +161,6 @@ export default function Home() {
           <button
             className="MetButton"
             onClick={async () => {
-              console.log("hello");
               if (status !== "connected") {
                 connectWallet();
               } else {
@@ -180,16 +177,19 @@ export default function Home() {
                   const encoded = schemaEncoder.encodeData([
                     { name: "metIRL", type: "bool", value: true },
                   ]);
+                  const recipient = await address.includes('.eth') ? await getAddressForENS(address) : address;
 
-                  const recipient = address;
-                  console.log(recipient);
+                  if(!recipient){
+                    alert('Incorrect recipient address');
+                    return;
+                  }
                   const offchain = await eas.getOffchain();
 
                   const time = Math.floor(Date.now() / 1000);
                   const offchainAttestation =
                     await offchain.signOffchainAttestation(
                       {
-                        recipient,
+                        recipient: recipient.toLowerCase(),
                         // Unix timestamp of when attestation expires. (0 for no expiration)
                         expirationTime: 0,
                         // Unix timestamp of current time
@@ -205,24 +205,22 @@ export default function Home() {
                       },
                       signer
                     );
-
+                  // un-comment the below to process an on-chain timestamp
                   // const transaction = await eas.timestamp(offchainAttestation.uid);
-
                   // // Optional: Wait for the transaction to be validated
                   // await transaction.wait();
                   const userAddress = await signer.getAddress();
-                  // offchainAttestation.account = addy
                   console.log(offchainAttestation);
                   const requestBody = {
                     ...offchainAttestation,
-                    account: userAddress,
+                    account: userAddress.toLowerCase(),
                   };
                   const requestOptions = {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(requestBody),
                   };
-
+                  // call attest api endpoint to store attestation on ComposeDB
                   await fetch("/api/attest", requestOptions)
                     .then((response) => response.json())
                     .then((data) => console.log(data));

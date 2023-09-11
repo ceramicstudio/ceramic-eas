@@ -25,7 +25,8 @@ export function AttestationItem({ data }: Props) {
 
   if (!address) return null;
 
-  const isAttester = data.attester.toLowerCase() === address.toLowerCase();
+  const isAttester = data.attester.toLowerCase() === data.currAccount;
+  console.log(data.currAccount);
   let isConfirmed = !!data.confirmation;
   const isConfirmable = !isAttester && !isConfirmed;
 
@@ -74,7 +75,6 @@ export function AttestationItem({ data }: Props) {
                   { name: "confirm", type: "bool", value: true },
                 ]);
 
-                // const recipient = data.attester;
                 const offchain = await eas.getOffchain();
                 const time = Math.floor(Date.now() / 1000);
                 const offchainAttestation =
@@ -95,12 +95,11 @@ export function AttestationItem({ data }: Props) {
                     signer
                   );
 
+                // un-comment the below to process an on-chain timestamp
                 // const transaction = await eas.timestamp(offchainAttestation.uid);
-
-                // // Optional: Wait for the transaction to be validated
+                // Optional: Wait for the transaction to be validated
                 // await transaction.wait();
                 const userAddress = await signer.getAddress();
-                // offchainAttestation.account = addy
                 console.log(offchainAttestation);
                 const requestBody = {
                   ...offchainAttestation,
@@ -112,10 +111,10 @@ export function AttestationItem({ data }: Props) {
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify(requestBody),
                 };
+                //call confirmAttest endpoint to create a corresponding confirmation
                 await fetch("/api/confirmAttest", requestOptions)
                   .then((response) => response.json())
                   .then((data) => console.log(data));
-
                 setConfirming(false);
                 window.location.reload();
               } catch (e) {}

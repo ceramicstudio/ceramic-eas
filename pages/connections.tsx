@@ -13,7 +13,6 @@ export default function Home() {
   const connectWallet = async () => {
     try {
       const { ethereum } = window;
-
       if (!ethereum) {
         alert("Get MetaMask -> https://metamask.io/");
         return;
@@ -60,6 +59,7 @@ export default function Home() {
     ethereum.on("chainChanged", handleChainChanged);
   };
 
+  //method to get all attestations
   async function getAtts() {
     setLoading(true);
     const requestBody = { account };
@@ -71,15 +71,14 @@ export default function Home() {
     const tmpAttestations = await fetch("/api/all", requestOptions)
       .then((response) => response.json())
       .then((data) => data);
-    console.log(tmpAttestations.data);
     setAttestations([]);
 
+    //exit call if no attestations are found
     if (!account || !tmpAttestations.data) {
-      // setLoading(false);
       return;
     }
-    // const tmpAttestations = await getAttestationsForAddress(address);
-    console.log(tmpAttestations.data.attestationIndex.edges);
+
+    //establish allRecords to check whether corresponding confirmations exist
     const allRecords = tmpAttestations.data.attestationIndex.edges;
     const addresses = new Set<string>();
 
@@ -89,39 +88,16 @@ export default function Home() {
       addresses.add(obj.recipient);
     });
 
-    // const ensNames = await getENSNames(Array.from(addresses));
-
-    console.log(addresses);
-    // const ensNames = await getENSNames(Array.from(addresses))
-    const stringified = JSON.stringify(allRecords);
-
-    const reqOpts = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: stringified,
-    };
-
-    console.log(allRecords);
-
-    let confirmations: any;
-    if (allRecords.length) {
-      confirmations = await fetch("/api/confirmations", reqOpts)
-        .then((response) => response.json())
-        .then((data) => data);
-
-      console.log(confirmations);
-    }
 
     const records: any[] = [];
     allRecords.forEach((att: any) => {
       const item = att.node;
-      // console.log(item)
-      // const amIAttester = item.attester.toLowerCase() === address.toLowerCase();
-
+      //if confirm field contains an item, a confirmation has been found
       if (att.node.confirm.edges.length) {
         item.confirmation = true;
       }
       item.uid = att.node.uid;
+      item.currAccount = account;
       records.push(item);
     });
 
@@ -131,10 +107,7 @@ export default function Home() {
 
 
   useEffect(() => {
-    
-    
     checkIfWalletIsConnected();
-    // console.log(attestations.length)
   }, [account]);
 
   return (
@@ -145,7 +118,6 @@ export default function Home() {
             {account.length && (
               <div className="right">
                 <img alt="Network logo" className="logo" src={"/ethlogo.png"} />
-
                 <p style={{ textAlign: "center" }}>
                   {" "}
                   Connected with: {account.slice(0, 6)}...{account.slice(-4)}{" "}

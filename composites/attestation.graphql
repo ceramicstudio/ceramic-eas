@@ -18,3 +18,4 @@ type Attestation @createModel(
   time: String @string(maxLength: 12)
   data: String! @string(maxLength: 1000000)
 }
+# @createIndex directive allows filtering and ordering by specified fields

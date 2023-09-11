@@ -49,4 +49,11 @@ export type ResolvedAttestation = Attestation & {
   name: string
   uid: string
   confirmation?: Attestation
+  currAccount: string;
+}
+
+declare global {
+  interface Window {
+    ethereum: any;
+  }
 }

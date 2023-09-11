@@ -1,13 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
-
-import { EAS } from "@ethereum-attestation-service/eas-sdk";
 import { networks } from "../utils/networks";
 import { QRCodeSVG } from "qrcode.react";
-import { EASContractAddress, getENSName } from "../utils/utils";
+import { getENSName } from "../utils/utils";
 
-
-const eas = new EAS(EASContractAddress);
 
 export default function Home() {
   const [status, setStatus] = useState("");

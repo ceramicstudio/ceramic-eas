@@ -18,7 +18,6 @@ export default async function createAttestation(
   res: NextApiResponse<any>
 ) {
   const { message, uid, account } = req.body;
-  console.log(req.body, "42");
   console.log(env.AUTHOR_KEY)
   //instantiate a ceramic client instance
   const ceramic = new CeramicClient('http://localhost:7007');
@@ -29,6 +28,7 @@ export default async function createAttestation(
     definition: definition as RuntimeCompositeDefinition,
   });
 
+  //authenticate developer DID in order to create a write transaction
   const authenticateDID = async(seed: string) => {
     const key = fromString(seed, "base16");
     const provider = new Ed25519Provider(key);
@@ -45,9 +45,7 @@ export default async function createAttestation(
   try {
     if (uniqueKey) {
       const did = await authenticateDID(uniqueKey);
-      console.log(did)
       composeClient.setDID(did);
-      console.log(req.body);
       const data: any = await composeClient.executeQuery(`
       mutation {
         createAttestation(input: {
