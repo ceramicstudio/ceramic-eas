@@ -1,13 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { networks } from "../utils/networks";
-import { AttestationItem } from "../components/AttestationItem";
-import { ResolvedAttestation } from "../utils/types";
+import { AttestToVerify } from "../components/AttestToVerify";
+import { FullAttestation } from "../utils/types";
 
 export default function Home() {
   const [account, setAccount] = useState("");
   const [network, setNetwork] = useState("");
-  const [attestations, setAttestations] = useState<ResolvedAttestation[]>([]);
+  const [attestations, setAttestations] = useState<FullAttestation[]>([]);
   const [loading, setLoading] = useState(false);
 
   const connectWallet = async () => {
@@ -145,7 +145,7 @@ export default function Home() {
                 {!loading && !attestations.length &&  <div>No one here</div>}
                 {attestations.length > 0 || loading ? (
                   attestations.map((attestation, i) => (
-                    <AttestationItem key={i} data={attestation} />
+                    <AttestToVerify key={i} data={attestation} />
                   ))
                 ) : (
                   <div></div>

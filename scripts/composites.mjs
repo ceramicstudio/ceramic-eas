@@ -24,10 +24,10 @@ export const writeComposite = async (spinner) => {
 
   const attestationComposite = await createComposite(
     ceramic,
-    "./composites/attestation.graphql"
+    "./composites/00-attestation.graphql"
   );
 
-  const confirmSchema = readFileSync("./composites/confirm.graphql", {
+  const confirmSchema = readFileSync("./composites/01-confirm.graphql", {
     encoding: "utf-8",
   }).replace("$ATTESTATION_ID", attestationComposite.modelIDs[0]);
 
@@ -37,7 +37,7 @@ export const writeComposite = async (spinner) => {
   });
 
   const confirmConnectSchema = readFileSync(
-    "./composites/confirmConnect.graphql",
+    "./composites/02-confirmConnect.graphql",
     {
       encoding: "utf-8",
     }

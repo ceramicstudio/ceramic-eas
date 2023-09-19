@@ -250,6 +250,10 @@ export default function Home() {
               {" "}
               <Link href="/connections">Connections</Link>
             </div>
+            <div className="SubText">
+              {" "}
+              <Link href="/verify">Verify Attestations</Link>
+            </div>
           </>
         )}
       </div>

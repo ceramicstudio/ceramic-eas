@@ -46,6 +46,17 @@ export default async function createAttestation(
                     uid
                     schema
                     attester
+                    verifyingContract 
+                    easVersion
+                    version 
+                    chainId 
+                    types{
+                      name
+                      type
+                    }
+                    r
+                    s
+                    v
                     recipient
                     refUID
                     data
@@ -54,6 +65,24 @@ export default async function createAttestation(
                       edges{
                         node{
                           id
+                          uid
+                          schema
+                          attester
+                          verifyingContract 
+                          easVersion
+                          version 
+                          chainId 
+                          types{
+                            name
+                            type
+                          }
+                          r
+                          s
+                          v
+                          recipient
+                          refUID
+                          data
+                          time
                         }
                       }
                     }

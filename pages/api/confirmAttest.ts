@@ -14,7 +14,7 @@ import { definition } from '../../src/__generated__/definition.js'
 const uniqueKey = env.AUTHOR_KEY
 
 export default async function createAttestation(req: NextApiRequest, res: NextApiResponse<any>) {
-  const { message, uid, account, stream } = req.body
+  const { message, uid, account, stream, domain, types, signature } = req.body
   //instantiate a ceramic client instance
   const ceramic = new CeramicClient('http://localhost:7007')
 
@@ -49,10 +49,18 @@ export default async function createAttestation(req: NextApiRequest, res: NextAp
             uid: "${uid}"
             schema: "${message.schema}"
             attester: "${account}"
+            verifyingContract: "${domain.verifyingContract}"
+            easVersion: "${domain.version}"
+            version: ${message.version}
+            chainId: ${domain.chainId}
+            r: "${signature.r}"
+            s: "${signature.s}"
+            v: ${signature.v}
+            types: ${JSON.stringify(types.Attest).replaceAll('"name"', 'name').replaceAll('"type"', 'type')}
             recipient: "${message.recipient}"
             refUID: "${message.refUID}"
             data: "${message.data}"
-            time: "${message.time.toString()}"
+            time: ${message.time}
             attestationId: "${stream}"
           }
         }) 
@@ -62,6 +70,17 @@ export default async function createAttestation(req: NextApiRequest, res: NextAp
             uid
             schema
             attester
+            verifyingContract 
+            easVersion
+            version 
+            chainId 
+            types{
+              name
+              type
+            }
+            r
+            s
+            v
             recipient
             refUID
             data
