@@ -82,6 +82,7 @@ export default async function createAttestation(
                           recipient
                           refUID
                           data
+                          dataId
                           time
                         }
                       }
