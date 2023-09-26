@@ -57,6 +57,7 @@ export default async function listAttestations(
             }
           }
       `);
+    console.log("listAttestation: got data " + JSON.stringify(data));
     return res.json(data);
   } catch (err) {
     res.json({

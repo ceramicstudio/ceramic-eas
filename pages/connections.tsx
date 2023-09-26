@@ -93,7 +93,7 @@ export default function Home() {
     allRecords.forEach((att: any) => {
       const item = att.node;
       //if confirm field contains an item, a confirmation has been found
-      if (att.node.confirm.edges.length) {
+      if (att.node.confirm && att.node.confirm.edges.length) {
         item.confirmation = true;
       }
       item.uid = att.node.uid;
