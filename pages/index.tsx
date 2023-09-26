@@ -263,7 +263,7 @@ export default function Home() {
 
                   const researchObject: any = await composeClient.executeQuery(`
                       mutation{
-                        createResearchObject(input:{
+                        createResearchObjectAttestation(input:{
                           content: {
                             isVettedResearchObject: ${vetted}
                             context: "${context}"
@@ -280,8 +280,11 @@ export default function Home() {
                         }
                       }
                   `);
-
-                  // console.log(researchObject.data.createResearchObject.document.id)
+                  console.log(researchObject);
+                  console.log(
+                    researchObject.data.createResearchObjectAttestation.document
+                      .id
+                  );
 
                   const data: any = await composeClient.executeQuery(`
                     mutation {
@@ -304,7 +307,10 @@ export default function Home() {
                             .replaceAll('"type"', "type")}
                           recipient: "${requestBody.message.recipient}"
                           refUID: "${requestBody.message.refUID}"
-                          dataId: "${researchObject.data.createResearchObject.document.id}"
+                          dataId: "${
+                            researchObject.data.createResearchObjectAttestation
+                              .document.id
+                          }"
                           time: ${requestBody.message.time}
                         }
                       }) 
