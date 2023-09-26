@@ -138,7 +138,7 @@ export default function Home() {
             </a>
             <div className="GradientBar" />
             
-            <div className="NewConnection">Who you met IRL.</div>
+            <div className="NewConnection">Research Object Reviews.</div>
             <div className="AttestationHolder">
               <div className="WhiteBox">
                 {loading && <div>Loading...</div>}

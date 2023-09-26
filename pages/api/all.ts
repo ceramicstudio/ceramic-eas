@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 import { definition } from '../../src/__generated__/definition.js';
 
-export default async function createAttestation(
+export default async function listAttestations(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
