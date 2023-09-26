@@ -1,4 +1,4 @@
-type ResearchObject @loadModel(id: "$RESEARCH_ID") {
+type ResearchObjectAttestation @loadModel(id: "$RESEARCH_ID") {
   id: ID!
 }
 
@@ -26,8 +26,8 @@ type Attestation @createModel(
   revocationTime: DateTime
   refUID: String @string(minLength: 66, maxLength: 66)
   time: Int! 
-  dataId: StreamID! @documentReference(model: "ResearchObject")
-  data: ResearchObject! @relationDocument(property: "dataId")
+  dataId: StreamID! @documentReference(model: "ResearchObjectAttestation")
+  data: ResearchObjectAttestation! @relationDocument(property: "dataId")
 }
 
 type Types {

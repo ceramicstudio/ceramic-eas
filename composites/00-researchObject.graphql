@@ -1,7 +1,7 @@
-type ResearchObject
+type ResearchObjectAttestation
   @createModel(
     accountRelation: LIST
-    description: "A simple research object model"
+    description: "A simple attestation about a research object model"
   )
   @createIndex(fields: [{ path: ["isVettedResearchObject"] }])
   @createIndex(fields: [{ path: ["researchObjectCID"] }]) {
