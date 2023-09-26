@@ -17,27 +17,10 @@ export default async function listAttestations(
 
   try {
     console.log(req.body.account);
+    console.log("listAttestations: about to execute query");
     const data: any = await composeClient.executeQuery(`
             query {
               attestationIndex(filters: {
-                or: [
-          {
-            where: {
-              attester: { 
-                    equalTo: "${req.body.account}"
-                  } 
-            }
-          },
-          {
-            and: {
-              where: {
-            recipient : {
-                    equalTo: "${req.body.account}"
-                  } 
-              }
-            }
-          }
-            ],
             } 
           first: 100) {
             edges {
@@ -57,7 +40,6 @@ export default async function listAttestations(
                     r
                     s
                     v
-                    recipient
                     refUID
                     data
                     time
@@ -79,10 +61,8 @@ export default async function listAttestations(
                           r
                           s
                           v
-                          recipient
                           refUID
                           data
-                          dataId
                           time
                         }
                       }
@@ -92,10 +72,10 @@ export default async function listAttestations(
             }
           }
       `);
-    console.log("I found some data in listAttestations: " + JSON.stringify(data));
+    console.log("listAttestations: found some data: " + JSON.stringify(data));
     return res.json(data);
   } catch (err) {
-    console.log("There was an error!);
+    console.log("listAttestations: There was an error!");
     res.json({
       err,
     });
