@@ -19,7 +19,7 @@ const client = z.object({
   NEXT_PUBLIC_USE_HARDHAT_PROVIDER: z.enum(['true', 'false']).default('false'),
   NEXT_PUBLIC_ALCHEMY_API_KEY: z.string().min(1).optional(),
   NEXT_PUBLIC_INFURA_API_KEY: z.string().min(1).optional(),
-  REACT_APP_ALCHEMY_API_KEY: z.string().min(1).optional(),
+  // REACT_APP_ALCHEMY_API_KEY: z.string().min(1).optional(),
   REACT_APP_CHAIN_ID: z.string().min(1).optional(),
 })
 
@@ -33,7 +33,7 @@ const processEnv = {
   NEXT_PUBLIC_USE_HARDHAT_PROVIDER: process.env.NEXT_PUBLIC_USE_HARDHAT_PROVIDER,
   NEXT_PUBLIC_ALCHEMY_API_KEY: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
   NEXT_PUBLIC_INFURA_API_KEY: process.env.NEXT_PUBLIC_INFURA_API_KEY,
-  REACT_APP_ALCHEMY_API_KEY: process.env.REACT_APP_ALCHEMY_API_KEY,
+  // REACT_APP_ALCHEMY_API_KEY: process.env.REACT_APP_ALCHEMY_API_KEY,
   REACT_APP_CHAIN_ID: process.env.REACT_APP_CHAIN_ID,
   AUTHOR_KEY: process.env.AUTHOR_KEY,
 }

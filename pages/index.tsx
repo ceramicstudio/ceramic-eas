@@ -4,7 +4,7 @@ import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 import { ethers } from "ethers";
 import { useCeramicContext } from "../context";
 import Link from "next/link";
-import { EASContractAddress, getAddressForENS } from "../utils/utils";
+import { EASContractAddress } from "../utils/utils";
 import { authenticateCeramic } from "../utils";
 
 const eas = new EAS(EASContractAddress);

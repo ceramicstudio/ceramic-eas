@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { networks } from "../utils/networks";
 import { QRCodeSVG } from "qrcode.react";
-import { getENSName } from "../utils/utils";
+// import { getENSName } from "../utils/utils";
 
 
 export default function Home() {
@@ -45,17 +45,17 @@ export default function Home() {
   };
 
   useEffect(() => {
-    async function checkENS() {
-      if (!address) return;
-      const name = await getENSName(address);
-      if (name) {
-        setEns(name);
-      } else {
-        setEns("");
-      }
-    }
+    // async function checkENS() {
+    //   if (!address) return;
+    //   const name = await getENSName(address);
+    //   if (name) {
+    //     setEns(name);
+    //   } else {
+    //     setEns("");
+    //   }
+    // }
     checkIfWalletIsConnected();
-    checkENS();
+    // checkENS();
   }, [address]);
 
   return (

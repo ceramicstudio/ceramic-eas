@@ -40,15 +40,15 @@ export const RunCommands = async () => {
         "metrics-port": 9090,
       },
       network: {
-        name: "testnet-clay",
+        name: "inmemory",
       },
       node: {},
       "state-store": {
         mode: "fs",
-        "local-directory": `~/.ceramic/statestore/`,
+        "local-directory": `${process.cwd()}/.ceramic/.ceramic/statestore/`,
       },
       indexing: {
-        db: `sqlite://${homedir()}/.ceramic/indexing.sqlite`,
+        db: `sqlite://${process.cwd()}/.ceramic/indexing.sqlite`,
         "allow-queries-before-historical-sync": true,
         models: [],
       },

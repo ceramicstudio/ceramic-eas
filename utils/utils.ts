@@ -10,7 +10,7 @@ import { env } from '../env.mjs'
 import type { Attestation, AttestationResult, EASChainConfig, EnsNamesResult, MyAttestationResult } from './types'
 
 
-export const alchemyApiKey = process.env.REACT_APP_ALCHEMY_API_KEY
+// export const alchemyApiKey = process.env.REACT_APP_ALCHEMY_API_KEY
 
 export const CUSTOM_SCHEMAS = {
   MET_IRL_SCHEMA: '0xc59265615401143689cbfe73046a922c975c99d97e4c248070435b1104b2dea7',
@@ -58,20 +58,20 @@ export const EAS_CONFIG = {
 
 export const timeFormatString = 'MM/DD/YYYY h:mm:ss a'
 
-export async function getAddressForENS(name: string) {
-  const config = {
-    apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
-    network: Network.ETH_GOERLI,
-  };
-  const alchemy = new Alchemy(config);
-  const address = await alchemy.core.resolveName(name)
-  return address
-}
+// export async function getAddressForENS(name: string) {
+//   const config = {
+//     apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
+//     network: Network.ETH_GOERLI,
+//   };
+//   const alchemy = new Alchemy(config);
+//   const address = await alchemy.core.resolveName(name)
+//   return address
+// }
 
-export async function getENSName(address: string) {
-  const provider = new ethers.providers.StaticJsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`, 'mainnet')
-  return await provider.lookupAddress(address)
-}
+// export async function getENSName(address: string) {
+//   const provider = new ethers.providers.StaticJsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`, 'mainnet')
+//   return await provider.lookupAddress(address)
+// }
 export async function getAttestation(uid: string): Promise<Attestation | null> {
   const response = await axios.post<AttestationResult>(
     `${baseURL}/graphql`,
