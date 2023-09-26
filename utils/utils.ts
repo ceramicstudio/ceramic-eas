@@ -1,31 +1,38 @@
-import axios from 'axios'
-import dayjs from 'dayjs'
-import duration from 'dayjs/plugin/duration'
-import relativeTime from 'dayjs/plugin/relativeTime'
+import axios from 'axios';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { Alchemy, Network } from 'alchemy-sdk';
-import { ethers } from 'ethers'
-import invariant from 'tiny-invariant'
-import { env } from '../env.mjs'
+import { ethers } from 'ethers';
+import invariant from 'tiny-invariant';
+import { env } from '../env.mjs';
 
-import type { Attestation, AttestationResult, EASChainConfig, EnsNamesResult, MyAttestationResult } from './types'
-
+import type {
+  Attestation,
+  AttestationResult,
+  EASChainConfig,
+  EnsNamesResult,
+  MyAttestationResult,
+} from './types';
 
 // export const alchemyApiKey = process.env.REACT_APP_ALCHEMY_API_KEY
 
 export const CUSTOM_SCHEMAS = {
-  MET_IRL_SCHEMA: '0xc59265615401143689cbfe73046a922c975c99d97e4c248070435b1104b2dea7',
-  CONFIRM_SCHEMA: '0xb96446c85ce538c1641a967f23ea11bbb4a390ef745fc5a9905689dbd48bac86',
-}
+  MET_IRL_SCHEMA:
+    '0xc59265615401143689cbfe73046a922c975c99d97e4c248070435b1104b2dea7',
+  CONFIRM_SCHEMA:
+    '0xb96446c85ce538c1641a967f23ea11bbb4a390ef745fc5a9905689dbd48bac86',
+};
 
-dayjs.extend(duration)
-dayjs.extend(relativeTime)
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
 
 function getChainId() {
-  return Number('11155111')
+  return Number('11155111');
 }
 
-export const CHAINID = getChainId()
-invariant(CHAINID, 'No chain ID env found')
+export const CHAINID = getChainId();
+invariant(CHAINID, 'No chain ID env found');
 
 export const EAS_CHAIN_CONFIGS: EASChainConfig[] = [
   {
@@ -39,24 +46,26 @@ export const EAS_CHAIN_CONFIGS: EASChainConfig[] = [
     contractStartBlock: 2958570,
     rpcProvider: `https://sepolia.infura.io/v3/`,
   },
-]
+];
 
-export const activeChainConfig = EAS_CHAIN_CONFIGS.find((config) => config.chainId === CHAINID)
+export const activeChainConfig = EAS_CHAIN_CONFIGS.find(
+  (config) => config.chainId === CHAINID
+);
 
-export const baseURL = `https://${activeChainConfig!.subdomain}easscan.org`
+export const baseURL = `https://${activeChainConfig!.subdomain}easscan.org`;
 
-invariant(activeChainConfig, 'No chain config found for chain ID')
-export const EASContractAddress = activeChainConfig.contractAddress
+invariant(activeChainConfig, 'No chain config found for chain ID');
+export const EASContractAddress = '0xA1207F3BBa224E2c9c3c6D5aF63D0eb1582Ce587';
 
-export const EASVersion = activeChainConfig.version
+export const EASVersion = activeChainConfig.version;
 
 export const EAS_CONFIG = {
   address: EASContractAddress,
   version: EASVersion,
   chainId: CHAINID,
-}
+};
 
-export const timeFormatString = 'MM/DD/YYYY h:mm:ss a'
+export const timeFormatString = 'MM/DD/YYYY h:mm:ss a';
 
 // export async function getAddressForENS(name: string) {
 //   const config = {
@@ -89,8 +98,8 @@ export async function getAttestation(uid: string): Promise<Attestation | null> {
         'content-type': 'application/json',
       },
     }
-  )
-  return response.data.data.attestation
+  );
+  return response.data.data.attestation;
 }
 export async function getAttestationsForAddress(address: string) {
   const response = await axios.post<MyAttestationResult>(
@@ -129,8 +138,8 @@ export async function getAttestationsForAddress(address: string) {
         'content-type': 'application/json',
       },
     }
-  )
-  return response.data.data.attestations
+  );
+  return response.data.data.attestations;
 }
 export async function getConfirmationAttestationsForUIDs(refUids: string[]) {
   const response = await axios.post<MyAttestationResult>(
@@ -160,14 +169,15 @@ export async function getConfirmationAttestationsForUIDs(refUids: string[]) {
         'content-type': 'application/json',
       },
     }
-  )
-  return response.data.data.attestations
+  );
+  return response.data.data.attestations;
 }
 export async function getENSNames(addresses: string[]) {
   const response = await axios.post<EnsNamesResult>(
     `${baseURL}/graphql`,
     {
-      query: 'query Query($where: EnsNameWhereInput) {\n  ensNames(where: $where) {\n    id\n    name\n  }\n}',
+      query:
+        'query Query($where: EnsNameWhereInput) {\n  ensNames(where: $where) {\n    id\n    name\n  }\n}',
       variables: {
         where: {
           id: {
@@ -182,6 +192,6 @@ export async function getENSNames(addresses: string[]) {
         'content-type': 'application/json',
       },
     }
-  )
-  return response.data.data.ensNames
+  );
+  return response.data.data.ensNames;
 }

@@ -1,24 +1,24 @@
-import { useState, useEffect } from "react";
-import { networks } from "../utils/networks";
-import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
-import { ethers } from "ethers";
-import { useCeramicContext } from "../context";
-import Link from "next/link";
-import { EASContractAddress } from "../utils/utils";
-import { authenticateCeramic } from "../utils";
+import { useState, useEffect } from 'react';
+import { networks } from '../utils/networks';
+import { EAS, SchemaEncoder } from '@ethereum-attestation-service/eas-sdk';
+import { ethers } from 'ethers';
+import { useCeramicContext } from '../context';
+import Link from 'next/link';
+import { EASContractAddress } from '../utils/utils';
+import { authenticateCeramic } from '../utils';
 
 const eas = new EAS(EASContractAddress);
 
 export default function Home() {
-  const [account, setAccount] = useState("");
-  const [status, setStatus] = useState("");
-  const [address, setAddress] = useState("");
+  const [account, setAccount] = useState('');
+  const [status, setStatus] = useState('');
+  const [address, setAddress] = useState('');
   const [vetted, setIsVetted] = useState(false);
-  const [researchCID, setResearchCID] = useState("");
-  const [context, setContext] = useState("");
-  const [ensResolvedAddress, setEnsResolvedAddress] = useState("Dakh.eth");
+  const [researchCID, setResearchCID] = useState('');
+  const [context, setContext] = useState('');
+  const [ensResolvedAddress, setEnsResolvedAddress] = useState('Dakh.eth');
   const [attesting, setAttesting] = useState(false);
-  const [network, setNetwork] = useState("");
+  const [network, setNetwork] = useState('');
   const clients = useCeramicContext();
   const { ceramic, composeClient } = clients;
 
@@ -31,13 +31,13 @@ export default function Home() {
     try {
       const { ethereum } = window;
       if (!ethereum) {
-        alert("Get MetaMask -> https://metamask.io/");
+        alert('Get MetaMask -> https://metamask.io/');
         return;
       }
       const accounts = await handleLogin();
-      console.log("Connected", accounts[0]);
+      console.log('Connected', accounts[0]);
       setAccount(accounts[0].toLowerCase());
-      setStatus("connected");
+      setStatus('connected');
     } catch (error) {
       console.log(error);
     }
@@ -51,32 +51,32 @@ export default function Home() {
     const { ethereum } = window;
 
     if (!ethereum) {
-      console.log("Make sure you have metamask!");
+      console.log('Make sure you have metamask!');
       return;
     } else {
-      console.log("We have the ethereum object", ethereum);
+      console.log('We have the ethereum object', ethereum);
     }
 
     // Check if we're authorized to access the user's wallet
-    const accounts = await ethereum.request({ method: "eth_accounts" });
+    const accounts = await ethereum.request({ method: 'eth_accounts' });
     // Users can have multiple authorized accounts, we grab the first one if its there!
     if (accounts.length !== 0) {
       const acc = accounts[0];
-      console.log("Found an authorized account:", acc);
+      console.log('Found an authorized account:', acc);
       setAccount(acc.toLowerCase());
-      setStatus("connected");
+      setStatus('connected');
     } else {
-      if (localStorage.getItem("did")) {
-        localStorage.removeItem("did");
+      if (localStorage.getItem('did')) {
+        localStorage.removeItem('did');
       }
-      console.log("No authorized account found");
+      console.log('No authorized account found');
     }
 
-    const chainId: string = await ethereum.request({ method: "eth_chainId" });
+    const chainId: string = await ethereum.request({ method: 'eth_chainId' });
 
     // @ts-expect-error: Ignore the following line
     setNetwork(networks[chainId]);
-    ethereum.on("chainChanged", handleChainChanged);
+    ethereum.on('chainChanged', handleChainChanged);
   };
 
   const switchNetwork = async () => {
@@ -84,8 +84,8 @@ export default function Home() {
       try {
         // Try to switch to the Mumbai testnet
         await window.ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0xaa36a7" }], // Check networks.js for hexadecimal network ids
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x1' }], // Check networks.js for hexadecimal network ids
         });
       } catch (error: any) {
         // This error code means that the chain we want has not been added to MetaMask
@@ -93,18 +93,18 @@ export default function Home() {
         if (error.code === 4902) {
           try {
             await window.ethereum.request({
-              method: "wallet_addEthereumChain",
+              method: 'wallet_addEthereumChain',
               params: [
                 {
-                  chainId: "11155111",
-                  chainName: "Sepolia Test Network",
-                  rpcUrls: ["https://eth-sepolia-public.unifra.io"],
+                  chainId: '1',
+                  chainName: 'Ethereum',
+                  rpcUrls: ['https://eth-mainnet-public.unifra.io'],
                   nativeCurrency: {
-                    name: "ETH",
-                    symbol: "SepoliaETH",
+                    name: 'ETH',
+                    symbol: 'ETH',
                     decimals: 18,
                   },
-                  blockExplorerUrls: ["https://sepolia.etherscan.io/"],
+                  blockExplorerUrls: ['https://etherscan.io'],
                 },
               ],
             });
@@ -117,7 +117,7 @@ export default function Home() {
     } else {
       // If window.ethereum is not found then MetaMask is not installed
       alert(
-        "MetaMask is not installed. Please install it to use this app: https://metamask.io/download.html"
+        'MetaMask is not installed. Please install it to use this app: https://metamask.io/download.html'
       );
     }
   };
@@ -130,14 +130,14 @@ export default function Home() {
     <div className="Container">
       {account && (
         <div className="right">
-          <img alt="Network logo" className="logo" src={"/ethlogo.png"} />
+          <img alt="Network logo" className="logo" src={'/ethlogo.png'} />
           {account.length ? (
-            <p style={{ textAlign: "center" }}>
-              {" "}
-              Connected with: {account.slice(0, 6)}...{account.slice(-4)}{" "}
+            <p style={{ textAlign: 'center' }}>
+              {' '}
+              Connected with: {account.slice(0, 6)}...{account.slice(-4)}{' '}
             </p>
           ) : (
-            <p style={{ textAlign: "center" }}> Not connected </p>
+            <p style={{ textAlign: 'center' }}> Not connected </p>
           )}
         </div>
       )}
@@ -149,10 +149,10 @@ export default function Home() {
         <div className="InputContainer">
           <input
             className="InputBlock"
-            autoCorrect={"off"}
-            autoComplete={"off"}
-            autoCapitalize={"off"}
-            placeholder={"Research Object CID"}
+            autoCorrect={'off'}
+            autoComplete={'off'}
+            autoCapitalize={'off'}
+            placeholder={'Research Object CID'}
             value={researchCID}
             onChange={(e) => setResearchCID(e.target.value)}
           />
@@ -160,10 +160,10 @@ export default function Home() {
         <div className="InputContainer">
           <input
             className="InputBlock"
-            autoCorrect={"off"}
-            autoComplete={"off"}
-            autoCapitalize={"off"}
-            placeholder={"Context"}
+            autoCorrect={'off'}
+            autoComplete={'off'}
+            autoCapitalize={'off'}
+            placeholder={'Context'}
             value={context}
             onChange={(e) => setContext(e.target.value)}
           />
@@ -173,24 +173,24 @@ export default function Home() {
           id="bool"
           name="bool"
           value={vetted.toString()}
-          onChange={(e) => setIsVetted(e.target.value === "true")}
+          onChange={(e) => setIsVetted(e.target.value === 'true')}
         >
           <option value="true">True</option>
           <option value="false">False</option>
         </select>
-        {status !== "connected" ? (
+        {status !== 'connected' ? (
           <button className="MetButton" onClick={async () => connectWallet()}>
             Connect Wallet
           </button>
-        ) : network !== "Sepolia" ? (
+        ) : network !== 'Mainnet' ? (
           <button className="MetButton" onClick={async () => switchNetwork()}>
-            Click here to switch to Sepolia
+            Click here to switch to Mainnet
           </button>
         ) : (
           <button
             className="MetButton"
             onClick={async () => {
-              if (status !== "connected") {
+              if (status !== 'connected') {
                 connectWallet();
               } else {
                 setAttesting(true);
@@ -201,31 +201,30 @@ export default function Home() {
                   const signer = provider.getSigner();
 
                   eas.connect(signer);
-                  console.log(eas);
                   const schemaEncoder = new SchemaEncoder(
-                    "bool isVettedResearchObject, string context, string researchObjectCID"
+                    'bool isVettedResearchObject, string context, string researchObjectCID'
                   );
                   const toEncode = [
                     {
-                      name: "isVettedResearchObject",
-                      type: "bool",
+                      name: 'isVettedResearchObject',
+                      type: 'bool',
                       value: vetted,
                     },
                     {
-                      name: "context",
-                      type: "string",
+                      name: 'context',
+                      type: 'string',
                       value: context,
                     },
                     {
-                      name: "researchObjectCID",
-                      type: "string",
+                      name: 'researchObjectCID',
+                      type: 'string',
                       value: researchCID,
                     },
                   ];
                   const encoded = schemaEncoder.encodeData(toEncode);
 
                   if (!vetted || !context || !researchCID) {
-                    alert("You are missing an input field");
+                    alert('You are missing an input field');
                     return;
                   }
                   const offchain = await eas.getOffchain();
@@ -234,7 +233,7 @@ export default function Home() {
                   const offchainAttestation =
                     await offchain.signOffchainAttestation(
                       {
-                        recipient: "0x0000000000000000000000000000000000000000",
+                        recipient: '0x0000000000000000000000000000000000000000',
                         // Unix timestamp of when attestation expires. (0 for no expiration)
                         expirationTime: 0,
                         // Unix timestamp of current time
@@ -243,9 +242,9 @@ export default function Home() {
                         version: 1,
                         nonce: 0,
                         schema:
-                          "0x2641a807bd8055df8078f1d4e3057f80ffbb2ee681dd7a3fbd53020894ab8d18",
+                          '0x2641a807bd8055df8078f1d4e3057f80ffbb2ee681dd7a3fbd53020894ab8d18',
                         refUID:
-                          "0x0000000000000000000000000000000000000000000000000000000000000000",
+                          '0x0000000000000000000000000000000000000000000000000000000000000000',
                         data: encoded,
                       },
                       signer
@@ -303,8 +302,8 @@ export default function Home() {
                           s: "${requestBody.signature.s}"
                           v: ${requestBody.signature.v}
                           types: ${JSON.stringify(requestBody.types.Attest)
-                            .replaceAll('"name"', "name")
-                            .replaceAll('"type"', "type")}
+                            .replaceAll('"name"', 'name')
+                            .replaceAll('"type"', 'type')}
                           recipient: "${requestBody.message.recipient}"
                           refUID: "${requestBody.message.refUID}"
                           dataId: "${
@@ -344,34 +343,36 @@ export default function Home() {
                     }
                   `);
                   console.log(data);
-                  setAddress("");
+                  setAddress('');
                   setAttesting(false);
-                } catch (e) {}
-                setAddress("");
+                } catch (e) {
+                  console.log('🚀 ~ file: index.tsx:350 ~ onClick={ ~ e:', e);
+                }
+                setAddress('');
                 setAttesting(false);
               }
             }}
           >
             {attesting
-              ? "Attesting..."
-              : status === "connected"
-              ? "Make Offchain attestation"
-              : "Connect wallet"}
+              ? 'Attesting...'
+              : status === 'connected'
+              ? 'Make Offchain attestation'
+              : 'Connect wallet'}
           </button>
         )}
 
-        {status === "connected" && (
+        {status === 'connected' && (
           <>
             <div className="SubText">
-              {" "}
+              {' '}
               <Link href="/qr">Show my QR code</Link>
             </div>
             <div className="SubText">
-              {" "}
+              {' '}
               <Link href="/connections">Connections</Link>
             </div>
             <div className="SubText">
-              {" "}
+              {' '}
               <Link href="/verify">Verify Attestations</Link>
             </div>
           </>
