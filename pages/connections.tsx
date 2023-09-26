@@ -68,9 +68,13 @@ export default function Home() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestBody),
     };
+
+    console.log("Going to try to get attestations now")
     const tmpAttestations = await fetch("/api/all", requestOptions)
       .then((response) => response.json())
       .then((data) => data);
+    console.log("Here are the attestations we found: " + JSON.stringify(tmpAttestations.data))
+
     setAttestations([]);
 
     //exit call if no attestations are found

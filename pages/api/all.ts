@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import { definition } from "../../src/__generated__/definition.js";
 
-export default async function createAttestation(
+export default async function listAttestations(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
@@ -92,8 +92,10 @@ export default async function createAttestation(
             }
           }
       `);
+    console.log("I found some data in listAttestations: " + JSON.stringify(data));
     return res.json(data);
   } catch (err) {
+    console.log("There was an error!);
     res.json({
       err,
     });
