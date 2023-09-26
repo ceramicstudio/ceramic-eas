@@ -1,0 +1,11 @@
+type ResearchObject
+  @createModel(
+    accountRelation: LIST
+    description: "A simple research object model"
+  )
+  @createIndex(fields: [{ path: ["isVettedResearchObject"] }])
+  @createIndex(fields: [{ path: ["researchObjectCID"] }]) {
+  isVettedResearchObject: Boolean!
+  context: String! @string(maxLength: 100000)
+  researchObjectCID: CID!
+}

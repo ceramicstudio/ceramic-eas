@@ -22,14 +22,23 @@ export const writeComposite = async (spinner) => {
   await authenticate();
   spinner.info("writing composite to Ceramic");
 
-  const attestationComposite = await createComposite(
+  const researchComposite = await createComposite(
     ceramic,
-    "./composites/00-attestation.graphql"
+    "./composites/00-researchObject.graphql"
   );
+
+  const attestationSchema = readFileSync("./composites/00-attestation.graphql", {
+    encoding: "utf-8",
+  }).replace("$RESEARCH_ID", researchComposite.modelIDs[0]);
+
+  const attestationComposite = await Composite.create({
+    ceramic,
+    schema: attestationSchema,
+  });
 
   const confirmSchema = readFileSync("./composites/01-confirm.graphql", {
     encoding: "utf-8",
-  }).replace("$ATTESTATION_ID", attestationComposite.modelIDs[0]);
+  }).replace("$ATTESTATION_ID", attestationComposite.modelIDs[1]);
 
   const confirmComposite = await Composite.create({
     ceramic,
@@ -43,7 +52,7 @@ export const writeComposite = async (spinner) => {
     }
   )
     .replace("$CONFIRM_ID", confirmComposite.modelIDs[1])
-    .replace("$ATTESTATION_ID", attestationComposite.modelIDs[0]);
+    .replace("$ATTESTATION_ID", attestationComposite.modelIDs[1]);
 
   const confirmConnectComposite = await Composite.create({
     ceramic,
@@ -51,6 +60,7 @@ export const writeComposite = async (spinner) => {
   });
 
   const composite = Composite.from([
+    researchComposite,
     attestationComposite,
     confirmComposite,
     confirmConnectComposite,

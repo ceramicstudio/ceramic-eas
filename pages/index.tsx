@@ -261,6 +261,28 @@ export default function Home() {
                     account: userAddress.toLowerCase(),
                   };
 
+                  const researchObject: any = await composeClient.executeQuery(`
+                      mutation{
+                        createResearchObject(input:{
+                          content: {
+                            isVettedResearchObject: ${vetted}
+                            context: "${context}"
+                            researchObjectCID: "${researchCID}"
+                          }
+                        })
+                        {
+                          document{
+                            id
+                            context
+                            isVettedResearchObject
+                            researchObjectCID
+                          }
+                        }
+                      }
+                  `);
+
+                  // console.log(researchObject.data.createResearchObject.document.id)
+
                   const data: any = await composeClient.executeQuery(`
                     mutation {
                       createAttestation(input: {
@@ -282,11 +304,7 @@ export default function Home() {
                             .replaceAll('"type"', "type")}
                           recipient: "${requestBody.message.recipient}"
                           refUID: "${requestBody.message.refUID}"
-                          data: {
-                            isVettedResearchObject: ${toEncode[0].value}
-                            context: "${toEncode[1].value}"
-                            researchObjectCID: "${toEncode[2].value}"
-                          }
+                          dataId: "${researchObject.data.createResearchObject.document.id}"
                           time: ${requestBody.message.time}
                         }
                       }) 
@@ -309,7 +327,7 @@ export default function Home() {
                           v
                           recipient
                           refUID
-                          data{
+                          data {
                             isVettedResearchObject
                             context
                             researchObjectCID

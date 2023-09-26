@@ -1,10 +1,13 @@
+type ResearchObject @loadModel(id: "$RESEARCH_ID") {
+  id: ID!
+}
 
 type Attestation @createModel(
     accountRelation: LIST
     description: "A simple attestation record model"
   )
   @createIndex(fields: [{ path: ["attester"] }])
-  @createIndex(fields: [{ path: ["recipient"] }])
+  @createIndex(fields: [{ path: ["verifyingContract"] }])
 {
   publisher: DID! @documentAccount 
   uid: String! @string(minLength: 66, maxLength: 66)
@@ -23,7 +26,8 @@ type Attestation @createModel(
   revocationTime: DateTime
   refUID: String @string(minLength: 66, maxLength: 66)
   time: Int! 
-  data: ResearchObject!
+  dataId: StreamID! @documentReference(model: "ResearchObject")
+  data: ResearchObject! @relationDocument(property: "dataId")
 }
 
 type Types {
@@ -31,11 +35,7 @@ type Types {
   type: String! @string(maxLength: 20)
 }
 
-type ResearchObject {
-  isVettedResearchObject: Boolean!
-  context: String! @string(maxLength: 100000)
-  researchObjectCID: CID!
-}
+
 
 
 # @createIndex directive allows filtering and ordering by specified fields
