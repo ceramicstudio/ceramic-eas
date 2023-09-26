@@ -13,9 +13,6 @@ export default function Home() {
   const [account, setAccount] = useState("");
   const [status, setStatus] = useState("");
   const [address, setAddress] = useState("");
-  const [vetted, setIsVetted] = useState(false);
-  const [researchCID, setResearchCID] = useState("");
-  const [context, setContext] = useState("");
   const [ensResolvedAddress, setEnsResolvedAddress] = useState("Dakh.eth");
   const [attesting, setAttesting] = useState(false);
   const [network, setNetwork] = useState("");
@@ -144,7 +141,9 @@ export default function Home() {
 
       <div className="GradientBar" />
       <div className="WhiteBox">
-        <div className="Title">Research Object Attestation</div>
+        <div className="Title">
+          I <b>attest</b> that I met
+        </div>
 
         <div className="InputContainer">
           <input
@@ -152,32 +151,14 @@ export default function Home() {
             autoCorrect={"off"}
             autoComplete={"off"}
             autoCapitalize={"off"}
-            placeholder={"Research Object CID"}
-            value={researchCID}
-            onChange={(e) => setResearchCID(e.target.value)}
+            placeholder={"Address/ENS"}
+            value={address}
+            onChange={(e) => setAddress(e.target.value.toLowerCase())}
           />
+          {ensResolvedAddress && (
+            <img className="EnsLogo" src={"/ens-logo.png"} />
+          )}
         </div>
-        <div className="InputContainer">
-          <input
-            className="InputBlock"
-            autoCorrect={"off"}
-            autoComplete={"off"}
-            autoCapitalize={"off"}
-            placeholder={"Context"}
-            value={context}
-            onChange={(e) => setContext(e.target.value)}
-          />
-        </div>
-        <label htmlFor="bool">Is Vetted Research Object?</label>
-        <select
-          id="bool"
-          name="bool"
-          value={vetted.toString()}
-          onChange={(e) => setIsVetted(e.target.value === "true")}
-        >
-          <option value="true">True</option>
-          <option value="false">False</option>
-        </select>
         {status !== "connected" ? (
           <button className="MetButton" onClick={async () => connectWallet()}>
             Connect Wallet
@@ -201,31 +182,17 @@ export default function Home() {
                   const signer = provider.getSigner();
 
                   eas.connect(signer);
-                  console.log(eas);
-                  const schemaEncoder = new SchemaEncoder(
-                    "bool isVettedResearchObject, string context, string researchObjectCID"
-                  );
-                  const toEncode = [
-                    {
-                      name: "isVettedResearchObject",
-                      type: "bool",
-                      value: vetted,
-                    },
-                    {
-                      name: "context",
-                      type: "string",
-                      value: context,
-                    },
-                    {
-                      name: "researchObjectCID",
-                      type: "string",
-                      value: researchCID,
-                    },
-                  ];
-                  const encoded = schemaEncoder.encodeData(toEncode);
 
-                  if (!vetted || !context || !researchCID) {
-                    alert("You are missing an input field");
+                  const schemaEncoder = new SchemaEncoder("bool metIRL");
+                  const encoded = schemaEncoder.encodeData([
+                    { name: "metIRL", type: "bool", value: true },
+                  ]);
+                  const recipient = (await address.includes(".eth"))
+                    ? await getAddressForENS(address)
+                    : address;
+
+                  if (!recipient) {
+                    alert("Incorrect recipient address");
                     return;
                   }
                   const offchain = await eas.getOffchain();
@@ -234,7 +201,7 @@ export default function Home() {
                   const offchainAttestation =
                     await offchain.signOffchainAttestation(
                       {
-                        recipient: "0x0000000000000000000000000000000000000000",
+                        recipient: recipient.toLowerCase(),
                         // Unix timestamp of when attestation expires. (0 for no expiration)
                         expirationTime: 0,
                         // Unix timestamp of current time
@@ -243,7 +210,7 @@ export default function Home() {
                         version: 1,
                         nonce: 0,
                         schema:
-                          "0x2641a807bd8055df8078f1d4e3057f80ffbb2ee681dd7a3fbd53020894ab8d18",
+                          "0xc59265615401143689cbfe73046a922c975c99d97e4c248070435b1104b2dea7",
                         refUID:
                           "0x0000000000000000000000000000000000000000000000000000000000000000",
                         data: encoded,
@@ -260,7 +227,6 @@ export default function Home() {
                     ...offchainAttestation,
                     account: userAddress.toLowerCase(),
                   };
-
                   const data: any = await composeClient.executeQuery(`
                     mutation {
                       createAttestation(input: {
@@ -268,9 +234,7 @@ export default function Home() {
                           uid: "${requestBody.uid}"
                           schema: "${requestBody.message.schema}"
                           attester: "${account}"
-                          verifyingContract: "${
-                            requestBody.domain.verifyingContract
-                          }"
+                          verifyingContract: "${requestBody.domain.verifyingContract}"
                           easVersion: "${requestBody.domain.version}"
                           version: ${requestBody.message.version}
                           chainId: ${requestBody.domain.chainId}
@@ -282,11 +246,7 @@ export default function Home() {
                             .replaceAll('"type"', "type")}
                           recipient: "${requestBody.message.recipient}"
                           refUID: "${requestBody.message.refUID}"
-                          data: {
-                            isVettedResearchObject: ${toEncode[0].value}
-                            context: "${toEncode[1].value}"
-                            researchObjectCID: "${toEncode[2].value}"
-                          }
+                          data: "${requestBody.message.data}"
                           time: ${requestBody.message.time}
                         }
                       }) 
@@ -309,17 +269,13 @@ export default function Home() {
                           v
                           recipient
                           refUID
-                          data{
-                            isVettedResearchObject
-                            context
-                            researchObjectCID
-                          }
+                          data
                           time
                         }
                       }
                     }
                   `);
-                  console.log(data);
+                  console.log(data)
                   setAddress("");
                   setAttesting(false);
                 } catch (e) {}

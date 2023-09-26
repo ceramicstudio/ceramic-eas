@@ -6,10 +6,6 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { definition } from '../../src/__generated__/definition.js'
 
 export default async function createAttestation(req: NextApiRequest, res: NextApiResponse<any>) {
-  const { account } = req.body
-
-  //instantiate a ceramic client instance
-  const ceramic = new CeramicClient('http://localhost:7007')
 
   //instantiate a composeDB client instance
   const composeClient = new ComposeClient({

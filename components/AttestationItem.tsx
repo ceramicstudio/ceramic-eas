@@ -6,6 +6,8 @@ import { MdOutlineVerified, MdVerified } from "react-icons/md";
 import { Identicon } from "./Identicon";
 import { theme } from "../utils/theme";
 import { ResolvedAttestation } from "../utils/types";
+import { useCeramicContext } from "../context";
+import { authenticateCeramic } from "../utils";
 import {
   CUSTOM_SCHEMAS,
   EASContractAddress,
@@ -22,6 +24,8 @@ const eas = new EAS(EASContractAddress);
 export function AttestationItem({ data }: Props) {
   const address = data.recipient;
   const [confirming, setConfirming] = useState(false);
+  const clients = useCeramicContext();
+  const { composeClient, ceramic } = clients;
 
   if (!address) return null;
 
@@ -66,6 +70,7 @@ export function AttestationItem({ data }: Props) {
                 const provider = new ethers.providers.Web3Provider(
                   window.ethereum as unknown as ethers.providers.ExternalProvider
                 );
+                await authenticateCeramic(ceramic, composeClient);
                 const signer = provider.getSigner();
                 console.log(signer);
                 eas.connect(signer);
@@ -106,15 +111,58 @@ export function AttestationItem({ data }: Props) {
                   account: userAddress,
                   stream: data.id,
                 };
-                const requestOptions = {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(requestBody),
-                };
-                //call confirmAttest endpoint to create a corresponding confirmation
-                await fetch("/api/confirmAttest", requestOptions)
-                  .then((response) => response.json())
-                  .then((data) => console.log(data));
+                const query: any = await composeClient.executeQuery(`
+                  mutation {
+                    createConfirm(input: {
+                      content: {
+                        uid: "${requestBody.uid}"
+                        schema: "${requestBody.message.schema}"
+                        attester: "${requestBody.account}"
+                        verifyingContract: "${
+                          requestBody.domain.verifyingContract
+                        }"
+                        easVersion: "${requestBody.domain.version}"
+                        version: ${requestBody.message.version}
+                        chainId: ${requestBody.domain.chainId}
+                        r: "${requestBody.signature.r}"
+                        s: "${requestBody.signature.s}"
+                        v: ${requestBody.signature.v}
+                        types: ${JSON.stringify(requestBody.types.Attest)
+                          .replaceAll('"name"', "name")
+                          .replaceAll('"type"', "type")}
+                        recipient: "${requestBody.message.recipient}"
+                        refUID: "${requestBody.message.refUID}"
+                        data: "${requestBody.message.data}"
+                        time: ${requestBody.message.time}
+                        attestationId: "${requestBody.stream}"
+                      }
+                    }) 
+                    {
+                      document {
+                        id
+                        uid
+                        schema
+                        attester
+                        verifyingContract 
+                        easVersion
+                        version 
+                        chainId 
+                        types{
+                          name
+                          type
+                        }
+                        r
+                        s
+                        v
+                        recipient
+                        refUID
+                        data
+                        time
+                      }
+                    }
+                  }
+                  `);
+                console.log(query);
                 setConfirming(false);
                 window.location.reload();
               } catch (e) {}

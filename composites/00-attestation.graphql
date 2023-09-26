@@ -23,12 +23,18 @@ type Attestation @createModel(
   revocationTime: DateTime
   refUID: String @string(minLength: 66, maxLength: 66)
   time: Int! 
-  data: String! @string(maxLength: 1000000)
+  data: ResearchObject!
 }
 
 type Types {
   name: String! @string(maxLength: 20)
   type: String! @string(maxLength: 20)
+}
+
+type ResearchObject {
+  isVettedResearchObject: Boolean!
+  context: String! @string(maxLength: 100000)
+  researchObjectCID: CID!
 }
 
 
