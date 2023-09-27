@@ -68,7 +68,7 @@ export default function Home() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestBody),
     };
-    const tmpAttestations = await fetch("/api/all", requestOptions)
+    const tmpAttestations = await fetch("/api/find", requestOptions)
       .then((response) => response.json())
       .then((data) => data);
     setAttestations([]);
