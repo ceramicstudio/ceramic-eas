@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "firstTime": "npx aws-sdk-js-codemod -t v2-to-v3 .",
+    "composites": "node ./scripts/composites.mjs",
     "generate": "node scripts/commands.mjs",
     "dev": "node scripts/run.mjs",
     "nextDev": "next dev",
@@ -20,8 +21,6 @@
     "@ceramicnetwork/http-client": "2.30.0",
     "@composedb/cli": "0.5.0",
     "@composedb/client": "0.5.0",
-    "@composedb/devtools": "0.5.0",
-    "@composedb/devtools-node": "0.5.0",
     "@didtools/cacao": "2.0.0",
     "@didtools/pkh-ethereum": "0.1.0",
     "@ethereum-attestation-service/eas-sdk": "^0.29.0",
@@ -51,6 +50,9 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@ceramicnetwork/stream-model": "^1.17.0",
+    "@composedb/devtools": "^0.5.0",
+    "@composedb/devtools-node": "^0.5.1",
     "@composedb/types": "^0.3.0",
     "@datamodels/identity-profile-basic": "^0.2.0",
     "@glazed/types": "^0.2.0",
