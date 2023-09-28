@@ -54,7 +54,7 @@ export default function Home() {
       console.log("Found an authorized account:", acc);
       setAccount(acc.toLowerCase());
       await createDummyVcs()
-      await getAtts()
+    //   await getAtts()
       
     } else {
       console.log("No authorized account found");
@@ -68,47 +68,78 @@ export default function Home() {
   };
 
   async function createDummyVcs() {
+
+    /*
+type VerifiableCredentialForGitcoinPassport
+  @createModel(accountRelation: LIST, description: "Verifiable Credential for Gitcoin Passport") {
+  issuer: String! @string(minLength: 1, maxLength: 1024)
+  issuanceDate: DateTime!
+  expirationDate: DateTime!
+  # must be jwt
+  proofType: String! @string(minLength: 1, maxLength: 1024)
+  proofPurpose: String! @string(minLength: 1, maxLength: 1024)
+  proofCreated: DateTime!
+  proofValue: String! @string(minLength: 1, maxLength: 1024)
+  verificationMethod: String! @string(minLength: 1, maxLength: 1024)
+  gitcoinPassportId: StreamID! @documentReference(model: "GitcoinPassport")
+  credentialSubject: GitcoinPassport! @relationDocument(property: "gitcoinPassportId")
+}
+    */
     setLoading(true);
-    const requestBody = { account };
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(requestBody),
-    };
-    const tmpAttestations = await fetch("/api/all", requestOptions)
-      .then((response) => response.json())
-      .then((data) => data);
-    setAttestations([]);
-
-    //exit call if no attestations are found
-    if (!account || !tmpAttestations.data) {
-      return;
-    }
-
-    //establish allRecords to check whether corresponding confirmations exist
-    const allRecords = tmpAttestations.data.attestationIndex.edges;
-    const addresses = new Set<string>();
-
-    allRecords.forEach((att: any) => {
-      const obj = att.node;
-      addresses.add(obj.attester);
-      addresses.add(obj.recipient);
-    });
-
-
-    const records: any[] = [];
-    allRecords.forEach((att: any) => {
-      const item = att.node;
-      //if confirm field contains an item, a confirmation has been found
-      if (att.node.confirm && att.node.confirm.edges.length) {
-        item.confirmation = true;
-      }
-      item.uid = att.node.uid;
-      item.currAccount = account;
-      records.push(item);
-    });
-    setAttestations([...attestations, ...records]);
-    console.log(records)
+    const dummyVC: any = await composeClient.executeQuery(`
+        mutation{
+        createGitcoinPassport(input:{
+            content: {
+            _id: "did:pkh:eip155:1:0x52905A5E83A83F6a9d0e64Ad24e79a37512D35B9"
+            provider: "Dummy string"
+            hash: "v0.0.0:s0jEKaXBJdfkziP2DDGVFPYcy+nIe6hS9yo3n1pIhRw="
+            }
+        })
+        {
+            document{
+            id
+            _id
+            provider
+            hash
+            }
+        }
+        }
+    `);
+    const id = dummyVC.data.createGitcoinPassport.document.id;
+    console.log(id)
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const finalVC: any = await composeClient.executeQuery(`
+        mutation{
+        createVerifiableCredentialForGitcoinPassport(input:{
+            content: {
+            issuer: "dummy string"
+            issuanceDate: "${new Date().toISOString()}"
+            expirationDate: "${new Date().toISOString()}"
+            proofType: "dummy string"
+            proofPurpose: "dummy string"
+            proofCreated: "${new Date().toISOString()}"
+            proofValue: "dummy string"
+            verificationMethod: "dummy string"
+            gitcoinPassportId: "${id}"
+            }
+        })
+        {
+            document{
+            id
+            issuer
+            issuanceDate
+            expirationDate
+            proofType
+            proofPurpose
+            proofCreated
+            proofValue
+            verificationMethod
+            gitcoinPassportId
+            }
+        }
+        }
+    `);
+    console.log(finalVC)
     setLoading(false);
   }
 
@@ -161,6 +192,7 @@ export default function Home() {
 
   useEffect(() => {
     checkIfWalletIsConnected();
+    handleLogin()
   }, [account]);
 
   return (

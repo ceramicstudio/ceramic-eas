@@ -1,9 +1,29 @@
 import { createContext, useContext } from "react";
 import { CeramicClient } from "@ceramicnetwork/http-client"
 import { ComposeClient } from "@composedb/client";
-
+import { fromString } from "uint8arrays/from-string";
 import { definition } from "../src/__generated__/definition.js";
 import { RuntimeCompositeDefinition } from "@composedb/types";
+import { env } from "../env.mjs";
+import { DID } from "dids";
+import { Ed25519Provider } from "key-did-provider-ed25519";
+import { getResolver } from "key-did-resolver";
+
+
+
+const authenticate = async () => {
+  const seed = process.env.KEY;
+  if(!seed) return;
+  const key = fromString(seed, "base16");
+  const did = new DID({
+    // @ts-ignore
+    resolver: getResolver(),
+    provider: new Ed25519Provider(key),
+  });
+  await did.authenticate();
+  ceramic.did = did;
+  composeClient.setDID(did);
+};
 
 
 /**
@@ -16,6 +36,8 @@ const composeClient = new ComposeClient({
   // cast our definition as a RuntimeCompositeDefinition
   definition: definition as RuntimeCompositeDefinition,
 });
+
+authenticate();
 
 const CeramicContext = createContext({ceramic: ceramic, composeClient: composeClient});
 
