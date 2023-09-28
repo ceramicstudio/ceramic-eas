@@ -1,0 +1,10 @@
+type GitcoinPassport @createModel(
+  # SINGLE or LIST ????
+  accountRelation: LIST
+  description: "A gitcoin passport with a provider and hash"
+)
+{
+  _id: String! @string(minLength: 1, maxLength: 1024)
+  provider: String! @string(minLength: 1, maxLength: 1024)
+  hash: String! @string(minLength: 1, maxLength: 1024)
+}
