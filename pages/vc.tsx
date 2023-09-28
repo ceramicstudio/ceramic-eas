@@ -2,14 +2,15 @@
 import React, { useEffect, useState } from "react";
 import { networks } from "../utils/networks";
 import { AttestationItem } from "../components/AttestationItem";
-import { ResolvedAttestation } from "../utils/types";
-import { authenticateCeramic } from '../utils';
-import { useCeramicContext } from '../context';
+import { VcItem } from "../components/VcItem";
+import { ResolvedAttestation, FullVC } from "../utils/types";
+import { authenticateCeramic } from "../utils";
+import { useCeramicContext } from "../context";
 
 export default function Home() {
   const [account, setAccount] = useState("");
   const [network, setNetwork] = useState("");
-  const [attestations, setAttestations] = useState<ResolvedAttestation[]>([]);
+  const [attestations, setAttestations] = useState<FullVC[]>([]);
   const [loading, setLoading] = useState(false);
   const clients = useCeramicContext();
   const { ceramic, composeClient } = clients;
@@ -23,11 +24,11 @@ export default function Home() {
     try {
       const { ethereum } = window;
       if (!ethereum) {
-        alert('Get MetaMask -> https://metamask.io/');
+        alert("Get MetaMask -> https://metamask.io/");
         return;
       }
       const accounts = await handleLogin();
-      console.log('Connected', accounts[0]);
+      console.log("Connected", accounts[0]);
       setAccount(accounts[0].toLowerCase());
     } catch (error) {
       console.log(error);
@@ -53,9 +54,8 @@ export default function Home() {
       const acc = accounts[0];
       console.log("Found an authorized account:", acc);
       setAccount(acc.toLowerCase());
-      await createDummyVcs()
-    //   await getAtts()
-      
+      //   await createDummyVcs()
+      await getAtts();
     } else {
       console.log("No authorized account found");
     }
@@ -68,23 +68,6 @@ export default function Home() {
   };
 
   async function createDummyVcs() {
-
-    /*
-type VerifiableCredentialForGitcoinPassport
-  @createModel(accountRelation: LIST, description: "Verifiable Credential for Gitcoin Passport") {
-  issuer: String! @string(minLength: 1, maxLength: 1024)
-  issuanceDate: DateTime!
-  expirationDate: DateTime!
-  # must be jwt
-  proofType: String! @string(minLength: 1, maxLength: 1024)
-  proofPurpose: String! @string(minLength: 1, maxLength: 1024)
-  proofCreated: DateTime!
-  proofValue: String! @string(minLength: 1, maxLength: 1024)
-  verificationMethod: String! @string(minLength: 1, maxLength: 1024)
-  gitcoinPassportId: StreamID! @documentReference(model: "GitcoinPassport")
-  credentialSubject: GitcoinPassport! @relationDocument(property: "gitcoinPassportId")
-}
-    */
     setLoading(true);
     const dummyVC: any = await composeClient.executeQuery(`
         mutation{
@@ -106,7 +89,7 @@ type VerifiableCredentialForGitcoinPassport
         }
     `);
     const id = dummyVC.data.createGitcoinPassport.document.id;
-    console.log(id)
+    console.log(id);
     await new Promise((resolve) => setTimeout(resolve, 1000));
     const finalVC: any = await composeClient.executeQuery(`
         mutation{
@@ -139,60 +122,64 @@ type VerifiableCredentialForGitcoinPassport
         }
         }
     `);
-    console.log(finalVC)
+    console.log(finalVC);
     setLoading(false);
   }
 
   //method to get all vcs
   async function getAtts() {
     setLoading(true);
-    const requestBody = { account };
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(requestBody),
-    };
-    const tmpAttestations = await fetch("/api/all", requestOptions)
-      .then((response) => response.json())
-      .then((data) => data);
+    const vcQuery: any = await composeClient.executeQuery(`
+    query {
+        verifiableCredentialForGitcoinPassportIndex(first: 10) {
+          edges {
+            node {
+            id
+            issuer
+            issuanceDate
+            expirationDate
+            proofType
+            proofPurpose
+            proofCreated
+            proofValue
+            verificationMethod
+            credentialSubject{
+                id
+                _id
+                provider
+                hash
+            }
+            }
+            }
+          }
+        }
+    `);
+    console.log(vcQuery);
     setAttestations([]);
 
     //exit call if no attestations are found
-    if (!account || !tmpAttestations.data) {
+    if (!account || !vcQuery.data) {
       return;
     }
-
     //establish allRecords to check whether corresponding confirmations exist
-    const allRecords = tmpAttestations.data.attestationIndex.edges;
+    const allRecords = vcQuery.data.verifiableCredentialForGitcoinPassportIndex.edges;
     const addresses = new Set<string>();
-
-    allRecords.forEach((att: any) => {
-      const obj = att.node;
-      addresses.add(obj.attester);
-      addresses.add(obj.recipient);
-    });
-
 
     const records: any[] = [];
     allRecords.forEach((att: any) => {
       const item = att.node;
-      //if confirm field contains an item, a confirmation has been found
-      if (att.node.confirm && att.node.confirm.edges.length) {
-        item.confirmation = true;
-      }
-      item.uid = att.node.uid;
-      item.currAccount = account;
       records.push(item);
     });
+
     setAttestations([...attestations, ...records]);
-    console.log(records)
+    console.log(allRecords)
+    console.log(attestations)
     setLoading(false);
   }
 
-
   useEffect(() => {
     checkIfWalletIsConnected();
-    handleLogin()
+    handleLogin();
   }, [account]);
 
   return (
@@ -222,20 +209,27 @@ type VerifiableCredentialForGitcoinPassport
               Back home
             </a>
             <div className="GradientBar" />
-            
+
             <div className="NewConnection">Research Object Reviews.</div>
             <div className="AttestationHolder">
               <div className="WhiteBox">
                 {loading && <div>Loading...</div>}
-                {!loading && !attestations.length &&  <div>No one here</div>}
+                {!loading && !attestations.length && <div>No one here</div>}
                 {attestations.length > 0 || loading ? (
                   attestations.map((attestation, i) => (
-                    <AttestationItem key={i} data={attestation} />
+                    <VcItem key={i} data={attestation} />
                   ))
                 ) : (
                   <div></div>
                 )}
-                {!account && <button className="MetButton" onClick={async () => connectWallet()}>Connect Wallet</button>}
+                {!account && (
+                  <button
+                    className="MetButton"
+                    onClick={async () => connectWallet()}
+                  >
+                    Connect Wallet
+                  </button>
+                )}
               </div>
             </div>
           </div>

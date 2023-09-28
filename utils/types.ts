@@ -83,3 +83,24 @@ declare global {
     ethereum: any;
   }
 }
+
+export interface GitcoinPassport {
+  id: string
+  _id: string
+  provider: string
+  hash: string
+}
+
+export interface FullVC {
+  id: string
+  issuer: string
+  issuanceDate: string
+  expirationDate: string
+  proofType: string
+  proofPurpose: string
+  proofCreated: string
+  proofValue: string
+  verificationMethod: string
+  gitcoinPassportId: string
+  credentialSubject: GitcoinPassport
+}
