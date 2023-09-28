@@ -3,4 +3,3 @@
 admin_seed.txt
 composedb.config.json
 node_modules/*
-src/__generated__/*
