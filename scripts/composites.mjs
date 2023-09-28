@@ -59,11 +59,27 @@ export const writeComposite = async (spinner) => {
     schema: confirmConnectSchema,
   });
 
+  const gitcoinComposite = await createComposite(
+    ceramic,
+    "./composites/04-gitcoinPassport.graphql"
+  );
+
+  const vcPassportSchema = readFileSync("./composites/04-verifiableCredentialForGitcoinPassport.graphql", {
+    encoding: "utf-8",
+  }).replace("$PASSPORT_ID", gitcoinComposite.modelIDs[0]);
+
+  const vcPassportComposite = await Composite.create({
+    ceramic,
+    schema: vcPassportSchema,
+  });
+
   const composite = Composite.from([
     researchComposite,
     attestationComposite,
     confirmComposite,
     confirmConnectComposite,
+    gitcoinComposite,
+    vcPassportComposite
   ]);
 
   await writeEncodedComposite(composite, "./src/__generated__/definition.json");
