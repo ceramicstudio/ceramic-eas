@@ -195,6 +195,8 @@ export default function Home() {
               } else {
                 setAttesting(true);
                 try {
+                  await authenticateCeramic(ceramic, composeClient);
+
                   const provider = new ethers.providers.Web3Provider(
                     window.ethereum as unknown as ethers.providers.ExternalProvider
                   );
@@ -343,6 +345,56 @@ export default function Home() {
                     }
                   `);
                   console.log(data);
+
+                  const resp = await fetch('http://localhost:3000/vc', {
+                    method: 'POST',
+                    headers: {
+                      Accept: 'application/json',
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      cid: researchCID,
+                      isVettedResearchObject: vetted,
+                      context: context,
+                    }),
+                  });
+                  const vc = await resp.json();
+
+                  const vcData: any = await composeClient.executeQuery(`
+                  mutation {
+                    createVerifiableCredential(input: {
+                      content: {
+                        issuer: "${vc.issuer.id}"
+                        issuanceDate: "${vc.issuanceDate}"
+                        expirationDate: "${vc.expirationDate}"
+                        proofType: "${vc.proof.type}"
+                        proofPurpose: "${vc.proof.purpose}"
+                        proofCreated: "${vc.proof.created}"
+                        proofValue: "${vc.proof.proofValue}"
+                        verificationMethod: "${vc.proof.verificationMethod}"
+                        credentialSubjectId: "${researchObject.data.createResearchObjectAttestation.document.id}"
+                      }
+                    }) 
+                    {
+                      document {
+                        issuer
+                        issuanceDate
+                        expirationDate
+                        proofType
+                        proofPurpose 
+                        proofCreated
+                        proofValue 
+                        verificationMethod 
+                        credentialSubject {
+                          isVettedResearchObject
+                          context
+                          researchObjectCID
+                        }
+                      }
+                    }
+                  }
+                `);
+                  console.log('vcData', vcData);
                   setAddress('');
                   setAttesting(false);
                 } catch (e) {

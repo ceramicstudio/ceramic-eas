@@ -1,0 +1,20 @@
+type ResearchObjectAttestation @loadModel(id: "$RESEARCH_ID") {
+  id: ID!
+}
+
+type VerifiableCredential
+  @createModel(accountRelation: LIST, description: "VC for reseach objet") 
+  @createIndex(fields: [{ path: ["issuer"] }])
+  {
+  issuer: String! @string(minLength: 1, maxLength: 1024)
+  issuanceDate: DateTime!
+  expirationDate: DateTime!
+  # must be jwt
+  proofType: String! @string(minLength: 1, maxLength: 1024)
+  proofPurpose: String! @string(minLength: 1, maxLength: 1024)
+  proofCreated: DateTime!
+  proofValue: String! @string(minLength: 1, maxLength: 1024)
+  verificationMethod: String! @string(minLength: 1, maxLength: 1024)
+  credentialSubjectId: StreamID! @documentReference(model: "ResearchObjectAttestation")
+  credentialSubject: ResearchObjectAttestation! @relationDocument(property: "credentialSubjectId")
+}

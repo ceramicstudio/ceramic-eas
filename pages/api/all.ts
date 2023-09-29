@@ -46,6 +46,7 @@ export default async function listAttestations(
                     v
                     recipient
                     refUID
+                    dataId
                     data{
                       isVettedResearchObject
                       context
@@ -57,8 +58,35 @@ export default async function listAttestations(
             }
           }
       `);
-    console.log("listAttestation: got data " + JSON.stringify(data));
-    return res.json(data);
+    const attestations = data.data.attestationIndex.edges.map((x) => x.node);
+    const vcData: any = await composeClient.executeQuery(`
+      query {
+        verifiableCredentialIndex(
+      first: 100) {
+        edges {
+          node {
+                issuer
+                issuanceDate
+                expirationDate
+                proofType
+                proofPurpose
+                proofCreated
+                proofValue
+                verificationMethod
+                credentialSubjectId
+                credentialSubject {
+                  isVettedResearchObject
+                  context
+                  researchObjectCID
+                }
+              }
+          }
+        }
+      }
+    `);
+    const vcs = vcData.data.verifiableCredentialIndex.edges.map((x) => x.node);
+
+    return res.json({ vcs, attestations });
   } catch (err) {
     res.json({
       err,

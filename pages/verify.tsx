@@ -8,6 +8,7 @@ export default function Home() {
   const [account, setAccount] = useState('');
   const [network, setNetwork] = useState('');
   const [attestations, setAttestations] = useState<FullAttestation[]>([]);
+  const [vcs, setVcs] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   const connectWallet = async () => {
@@ -67,22 +68,21 @@ export default function Home() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(requestBody),
     };
-    const tmpAttestations = await fetch('/api/all', requestOptions)
+    const data = await fetch('/api/all', requestOptions)
       .then((response) => response.json())
-      .then((data) => data);
+      .then((data) => {
+        return data;
+      });
     setAttestations([]);
 
     //exit call if no attestations are found
-    if (!account || !tmpAttestations.data) {
+    if (!account || !data.attestations || data.attestations.length === 0) {
+      setLoading(false);
       return;
     }
 
-    //establish allRecords to check whether corresponding confirmations exist
-    const records = tmpAttestations.data.attestationIndex.edges.map(
-      (x) => x.node
-    );
-    console.log('🚀 ~ file: verify.tsx:83 ~ getAtts ~ records:', records);
-    setAttestations([...attestations, ...records]);
+    setAttestations([...attestations, ...data.attestations]);
+    setVcs([...vcs, ...data.vcs]);
     setLoading(false);
   }
 
@@ -124,9 +124,18 @@ export default function Home() {
                 {loading && <div>Loading...</div>}
                 {!loading && !attestations.length && <div>No one here</div>}
                 {attestations.length > 0 || loading ? (
-                  attestations.map((attestation, i) => (
-                    <AttestToVerify key={i} data={attestation} />
-                  ))
+                  attestations.map((attestation, i) => {
+                    const vc = vcs.find(
+                      (vc) => vc.credentialSubjectId === attestation.dataId
+                    );
+                    return (
+                      <AttestToVerify
+                        key={i}
+                        attestation={attestation}
+                        vc={vc}
+                      />
+                    );
+                  })
                 ) : (
                   <div></div>
                 )}

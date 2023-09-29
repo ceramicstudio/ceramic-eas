@@ -20,7 +20,8 @@ import {
 } from '../utils/utils';
 
 type Props = {
-  data: FullAttestation;
+  attestation: FullAttestation;
+  vc: any;
 };
 
 const eas = new EAS(EASContractAddress);
@@ -83,21 +84,158 @@ const generateAttestation = (data) => {
   };
 };
 
-export function AttestToVerify({ data }: Props) {
-  const address = data.recipient;
+const generateVc = (data) => {
+  return {
+    '@context': [
+      'https://www.w3.org/2018/credentials/v1',
+      'https://beta.api.schemas.serto.id/v1/public/valid-research-object/2.0/ld-context.json',
+    ],
+    issuer: {
+      id: data.issuer,
+    },
+    type: ['VerifiableCredential', 'ValidResearchObject'],
+    credentialSchema: {
+      id: 'https://beta.api.schemas.serto.id/v1/public/valid-research-object/2.0/json-schema.json',
+      type: 'JsonSchemaValidator2018',
+    },
+    issuanceDate: data.issuanceDate,
+    expirationDate: data.expirationDate,
+    credentialSubject: {
+      cid: data.credentialSubject.researchObjectCID,
+      isVettedResearchObject: data.credentialSubject.isVettedResearchObject,
+      context: data.credentialSubject.context,
+    },
+    proof: {
+      verificationMethod: data.verificationMethod,
+      created: data.proofCreated,
+      proofPurpose: 'assertionMethod',
+      type: 'EthereumEip712Signature2021',
+      proofValue: data.proofValue,
+      eip712: {
+        domain: {
+          chainId: 5,
+          name: 'VerifiableCredential',
+          version: '1',
+        },
+        types: {
+          EIP712Domain: [
+            {
+              name: 'name',
+              type: 'string',
+            },
+            {
+              name: 'version',
+              type: 'string',
+            },
+            {
+              name: 'chainId',
+              type: 'uint256',
+            },
+          ],
+          CredentialSchema: [
+            {
+              name: 'id',
+              type: 'string',
+            },
+            {
+              name: 'type',
+              type: 'string',
+            },
+          ],
+          CredentialSubject: [
+            {
+              name: 'cid',
+              type: 'string',
+            },
+            {
+              name: 'context',
+              type: 'string',
+            },
+            {
+              name: 'isVettedResearchObject',
+              type: 'bool',
+            },
+          ],
+          Issuer: [
+            {
+              name: 'id',
+              type: 'string',
+            },
+          ],
+          Proof: [
+            {
+              name: 'created',
+              type: 'string',
+            },
+            {
+              name: 'proofPurpose',
+              type: 'string',
+            },
+            {
+              name: 'type',
+              type: 'string',
+            },
+            {
+              name: 'verificationMethod',
+              type: 'string',
+            },
+          ],
+          VerifiableCredential: [
+            {
+              name: '@context',
+              type: 'string[]',
+            },
+            {
+              name: 'credentialSchema',
+              type: 'CredentialSchema',
+            },
+            {
+              name: 'credentialSubject',
+              type: 'CredentialSubject',
+            },
+            {
+              name: 'expirationDate',
+              type: 'string',
+            },
+            {
+              name: 'issuanceDate',
+              type: 'string',
+            },
+            {
+              name: 'issuer',
+              type: 'Issuer',
+            },
+            {
+              name: 'proof',
+              type: 'Proof',
+            },
+            {
+              name: 'type',
+              type: 'string[]',
+            },
+          ],
+        },
+        primaryType: 'VerifiableCredential',
+      },
+    },
+  };
+};
+
+export function AttestToVerify({ attestation: atts, vc: vcData }: Props) {
+  const address = atts.recipient;
   const [confirming, setConfirming] = useState(false);
   const [validated, setValidated] = useState(false);
   const [generatedAttestation, setGeneratedAttestation] = useState('');
+  const [generatedVc, setGeneratedVc] = useState('');
 
   if (!address) return null;
 
-  const isAttester = data.attester.toLowerCase() === data.currAccount;
-
+  const isAttester = atts.attester.toLowerCase() === atts.currAccount;
   return (
     <div
       className="AttestContainer"
       onClick={() => {
-        window.open(`${baseURL}/attestation/view/${data.id}`);
+        window.open(`${baseURL}/attestation/view/${atts.id}`);
       }}
     >
       <div className="IconHolder">
@@ -105,16 +243,16 @@ export function AttestToVerify({ data }: Props) {
           <div style={{ fontSize: '2rem', color: 'green' }}>Valid</div>
         )}
         <Identicon
-          address={isAttester ? data.recipient : data.attester}
+          address={isAttester ? atts.recipient : atts.attester}
           size={60}
         />
       </div>
       <div className="NameHolder">
-        <p>From:</p> {data.attester}
-        <p>researchObjectCID:</p> {data.data.researchObjectCID}
+        <p>From:</p> {atts.attester}
+        <p>researchObjectCID:</p> {atts.data.researchObjectCID}
       </div>
       <div className="Time">
-        {dayjs.unix(data.time).format(timeFormatString)}
+        {dayjs.unix(atts.time).format(timeFormatString)}
       </div>
       <div className="Check">
         {!validated && (
@@ -125,7 +263,7 @@ export function AttestToVerify({ data }: Props) {
               setConfirming(true);
               try {
                 // your offchain attestation
-                const attestation = generateAttestation(data);
+                const attestation = generateAttestation(atts);
 
                 const EAS_CONFIG: PartialTypedDataConfig = {
                   address: attestation.sig.domain.verifyingContract,
@@ -160,13 +298,14 @@ export function AttestToVerify({ data }: Props) {
             onClick={async (e) => {
               e.stopPropagation();
               try {
-                const attestation = generateAttestation(data);
+                const attestation = generateAttestation(atts);
                 setGeneratedAttestation(
                   JSON.stringify({
                     signer: attestation.signer,
                     sig: attestation.sig,
                   })
                 );
+                setGeneratedVc('');
               } catch (e) {}
             }}
           >
@@ -174,8 +313,26 @@ export function AttestToVerify({ data }: Props) {
           </button>
         }
       </div>
+      <div className="Check">
+        {
+          <button
+            className="ConfirmButton"
+            onClick={async (e) => {
+              e.stopPropagation();
+              try {
+                const vc = generateVc(vcData);
+                setGeneratedVc(JSON.stringify(vc));
+                setGeneratedAttestation('');
+              } catch (e) {}
+            }}
+          >
+            {'Generate VC'}
+          </button>
+        }
+      </div>
       <div className="NameHolder">
         {generatedAttestation && <div>{generatedAttestation}</div>}
+        {generatedVc && <div>{generatedVc}</div>}
       </div>
     </div>
   );
