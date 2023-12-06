@@ -1,0 +1,65 @@
+type Attestation @createModel(
+    accountRelation: LIST
+    description: "A simple attestation record model"
+  )
+  @createIndex(fields: [{ path: ["attester"] }])
+  @createIndex(fields: [{ path: ["recipient"] }])
+{
+  publisher: DID! @documentAccount 
+  uid: String! @string(minLength: 66, maxLength: 66)
+  schema: String! @string(minLength: 66, maxLength: 66)
+  attester: String! @string(minLength: 42, maxLength: 42)
+  verifyingContract: String! @string(minLength: 42, maxLength: 42)
+  easVersion: String! @string(maxLength: 5)
+  version: Int!
+  chainId: Int! 
+  r: String! @string(minLength: 66, maxLength: 66)
+  s: String! @string(minLength: 66, maxLength: 66)
+  v: Int! 
+  types: [Types] @list(maxLength: 100)
+  recipient: String @string(minLength: 42, maxLength: 42)
+  expirationTime: DateTime
+  revocationTime: DateTime
+  refUID: String @string(minLength: 66, maxLength: 66)
+  time: Int! 
+  data: String! @string(maxLength: 1000000)
+  confirm: [Confirm] @relationFrom(model: "Confirm", property: "attestationId")
+}
+
+type Types {
+  name: String! @string(maxLength: 20)
+  type: String! @string(maxLength: 20)
+}
+
+type Confirm @createModel(
+    accountRelation: LIST
+    description: "A simple model to track attestation confirmations"
+  )
+  @createIndex(fields: [{ path: ["attester"] }])
+  @createIndex(fields: [{ path: ["recipient"] }])
+{
+  publisher: DID! @documentAccount 
+  uid: String! @string(minLength: 66, maxLength: 66)
+  schema: String! @string(minLength: 66, maxLength: 66)
+  attester: String! @string(minLength: 42, maxLength: 42)
+  verifyingContract: String! @string(minLength: 42, maxLength: 42)
+  easVersion: String! @string(maxLength: 5)
+  version: Int!
+  chainId: Int! 
+  r: String! @string(minLength: 66, maxLength: 66)
+  s: String! @string(minLength: 66, maxLength: 66)
+  v: Int! 
+  types: [Types] @list(maxLength: 100)
+  recipient: String @string(minLength: 42, maxLength: 42)
+  expirationTime: DateTime
+  revocationTime: DateTime
+  refUID: String @string(minLength: 66, maxLength: 66)
+  time: Int!
+  data: String! @string(maxLength: 1000000)
+  attestationId: StreamID! @documentReference(model: "Attestation")
+  attestation: Attestation! @relationDocument(property: "attestationId")
+}
+
+# type Attestation @loadModel(id: "$Attestation") {
+#   confirm: [Confirm] @relationFrom(model: "Confirm", property: "attestationId")
+# }

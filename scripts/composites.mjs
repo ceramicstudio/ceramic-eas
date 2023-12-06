@@ -50,13 +50,18 @@ export const writeComposite = async (spinner) => {
     schema: confirmConnectSchema,
   });
 
-  const composite = Composite.from([
-    attestationComposite,
-    confirmComposite,
-    confirmConnectComposite,
-  ]);
+  // const composite = Composite.from([
+  //   attestationComposite,
+  //   confirmComposite,
+  //   confirmConnectComposite,
+  // ]);
 
-  await writeEncodedComposite(composite, "./src/__generated__/definition.json");
+  const allComposite = await createComposite(
+    ceramic,
+    "./composites/00-all.graphql"
+  );
+
+  await writeEncodedComposite(allComposite, "./src/__generated__/definition.json");
   spinner.info("creating composite for runtime usage");
   await writeEncodedCompositeRuntime(
     ceramic,
