@@ -40,7 +40,7 @@ export function AttestationItem({ data }: Props) {
     <div
       className="AttestContainer"
       onClick={() => {
-        window.open(`${baseURL}/attestation/view/${data.id}`);
+        window.open(`http://localhost:7007/api/v0/streams/${data.id}`);
       }}
     >
       <div className="IconHolder">

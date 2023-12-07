@@ -18,7 +18,7 @@ npm run generate
 
 3. Create a .env file and enter the three required environment variables outlined in .env.example
 
-4. Run the application (make sure you are using node version 16):
+4. Run the application (make sure you are using node version 20):
 
 #### Development
 ```bash
