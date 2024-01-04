@@ -25,11 +25,6 @@ npm run generate
 npm run dev
 ```
 
-#### Build
-```bash
-npm run build
-```
-
 ## Learn More
 
 To learn more about Ceramic please visit the following links
