@@ -31,6 +31,5 @@ To learn more about Ceramic please visit the following links
 
 - [Ethereum Attestation Service](https://attest.sh/) - Details on how to define attestation schemas and create on/off-chain attestations!
 - [Ceramic Documentation](https://developers.ceramic.network/learn/welcome/) - Learn more about the Ceramic Ecosystem.
-- [ComposeDB](https://composedb.js.org/) - Details on how to use and develop with ComposeDB!
+- [ComposeDB](https://developers.ceramic.network/docs/composedb/getting-started) - Details on how to use and develop with ComposeDB!
 
-You can check out [Create Ceramic App repo](https://github.com/ceramicstudio/create-ceramic-app) and provide us with your feedback or contributions! 
