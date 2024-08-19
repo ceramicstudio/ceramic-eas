@@ -5,6 +5,7 @@
   "scripts": {
     "firstTime": "npx aws-sdk-js-codemod -t v2-to-v3 .",
     "generate": "node scripts/commands.mjs",
+    "seed": "node scripts/seed.mjs",
     "dev": "node scripts/run.mjs",
     "nextDev": "next dev",
     "ceramic": "CERAMIC_ENABLE_EXPERIMENTAL_COMPOSE_DB='true' ceramic daemon --config ./composedb.config.json",
@@ -37,7 +38,7 @@
     "graphql": "^16.6.0",
     "jdenticon": "^3.2.0",
     "lru_map": "^0.4.1",
-    "next": "^12.0.4",
+    "next": "^12.0.7",
     "ora": "^6.1.2",
     "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
